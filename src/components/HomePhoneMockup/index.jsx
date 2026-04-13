@@ -1,8 +1,11 @@
 import { useState, useEffect } from "react";
 
+import { Ic } from "../ui/Icons";
+
 /* ─── Phone mockup — pure SVG/JSX, no images ─────────────────────────────*/
 export default function HomePhoneMockup() {
   const [tick, setTick] = useState(0);
+
   useEffect(() => {
     const id = setInterval(() => setTick((t) => (t + 1) % 4), 1800);
     return () => clearInterval(id);
