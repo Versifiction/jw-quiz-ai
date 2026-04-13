@@ -8,12 +8,7 @@ import HomeScroller from "../../components/HomeScroller";
 function Home() {
   return (
     <div className="w-full">
-      <Nav />
       <HomeLanding />
-      <HomeConnect />
-      <HomeScroller />
-      <HomeCount />
-      <Footer />
     </div>
   );
 }
