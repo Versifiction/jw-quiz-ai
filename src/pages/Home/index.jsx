@@ -1,10 +1,12 @@
+import Nav from "../../components/ui/Nav";
 import HomeLanding from "../../components/HomeLanding";
 
 function Home() {
   return (
-    <div className="w-full">
+    <>
+      <Nav />
       <HomeLanding />
-    </div>
+    </>
   );
 }
 
