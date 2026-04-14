@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 
 import { Ic } from "../ui/Icons";
+import Logo from "../ui/Logo";
 
 /* ─── Phone mockup — pure SVG/JSX, no images ─────────────────────────────*/
 export default function HomePhoneMockup() {
@@ -15,16 +16,24 @@ export default function HomePhoneMockup() {
     {
       q: "Quel fils de Jacob fut vendu comme esclave ?",
       opts: ["Ruben", "Joseph", "Siméon", "Lévi"],
+      category: "Pentateuque",
       ans: 1,
     },
     {
       q: "Quel prophète fut envoyé à Ninive ?",
       opts: ["Élie", "Amos", "Jonas", "Michée"],
+      category: "Prophètes",
       ans: 2,
+    },
+    {
+      q: "Quel animal adressa la parole à Eve ?",
+      opts: ["Un serpent", "Un oiseau", "Un lion", "Un agneau"],
+      category: "Pentateuque",
+      ans: 0,
     },
   ];
   const cur = questions[tick % questions.length];
-  const answered = tick % 2 === 1;
+  // const answered = tick % 2 === 1;
 
   return (
     <div
@@ -86,41 +95,7 @@ export default function HomePhoneMockup() {
               marginBottom: 14,
             }}
           >
-            <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-              <div
-                style={{
-                  width: 22,
-                  height: 22,
-                  borderRadius: 6,
-                  background: "linear-gradient(135deg,#10b981,#059669)",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                <svg
-                  width="11"
-                  height="11"
-                  viewBox="0 0 22 22"
-                  fill="none"
-                  stroke="#fff"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                >
-                  <path d="M11 1 L13.5 8 L21 11 L13.5 14 L11 21 L8.5 14 L1 11 L8.5 8 Z" />
-                </svg>
-              </div>
-              <span
-                style={{
-                  fontFamily: "'Outfit',sans-serif",
-                  fontSize: 11,
-                  fontWeight: 700,
-                  color: "#fff",
-                }}
-              >
-                Scriptura
-              </span>
-            </div>
+            <Logo width={20} height={20} fontSize={12} />
             <div style={{ display: "flex", gap: 4 }}>
               {[0, 1, 2].map((i) => (
                 <div
@@ -149,32 +124,13 @@ export default function HomePhoneMockup() {
           >
             <div
               style={{
-                width: `${((tick % 5) + 1) * 18}%`,
+                width: `${((tick % 3) + 1) * 33}%`,
                 height: "100%",
                 background: "linear-gradient(90deg,#10b981,#34d399)",
                 borderRadius: 99,
                 transition: "width 0.6s cubic-bezier(0.16,1,0.3,1)",
               }}
             />
-          </div>
-
-          {/* Category tag */}
-          <div style={{ marginBottom: 10 }}>
-            <span
-              style={{
-                fontFamily: "'DM Sans',sans-serif",
-                fontSize: 9,
-                fontWeight: 600,
-                letterSpacing: "0.12em",
-                textTransform: "uppercase",
-                color: "#10b981",
-                background: "rgba(16,185,129,0.12)",
-                padding: "3px 8px",
-                borderRadius: 99,
-              }}
-            >
-              Évangiles
-            </span>
           </div>
 
           {/* Question */}
@@ -194,52 +150,69 @@ export default function HomePhoneMockup() {
 
           {/* Options */}
           <div style={{ display: "flex", flexDirection: "column", gap: 7 }}>
+            {" "}
+            <div style={{ marginBottom: 10 }}>
+              <span
+                style={{
+                  fontFamily: "'DM Sans',sans-serif",
+                  fontSize: 9,
+                  fontWeight: 600,
+                  letterSpacing: "0.12em",
+                  textTransform: "uppercase",
+                  color: "#10b981",
+                  background: "rgba(16,185,129,0.12)",
+                  padding: "3px 8px",
+                  borderRadius: 99,
+                }}
+              >
+                {cur.category}
+              </span>
+            </div>
             {cur.opts.map((opt, i) => {
               const isCorrect = i === cur.ans;
-              const showResult = answered;
+              console.log("cur : ", cur);
+              // const showResult = answered;
               return (
-                <div
-                  key={i}
-                  style={{
-                    padding: "9px 11px",
-                    borderRadius: 10,
-                    background:
-                      showResult && isCorrect
+                <>
+                  <div
+                    key={i}
+                    style={{
+                      padding: "9px 11px",
+                      borderRadius: 10,
+                      background: isCorrect
                         ? "rgba(16,185,129,0.18)"
-                        : showResult && i === 0
+                        : i === 0
                           ? "rgba(239,68,68,0.12)"
                           : "rgba(255,255,255,0.06)",
-                    border: `1px solid ${showResult && isCorrect ? "rgba(16,185,129,0.5)" : "rgba(255,255,255,0.08)"}`,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    transition: "all 0.4s cubic-bezier(0.16,1,0.3,1)",
-                  }}
-                >
-                  <span
-                    style={{
-                      fontFamily: "'DM Sans',sans-serif",
-                      fontSize: 11,
-                      color:
-                        showResult && isCorrect
-                          ? "#34d399"
-                          : "rgba(255,255,255,0.75)",
+                      border: `1px solid ${isCorrect ? "rgba(16,185,129,0.5)" : "rgba(255,255,255,0.08)"}`,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      transition: "all 0.4s cubic-bezier(0.16,1,0.3,1)",
                     }}
                   >
-                    {opt}
-                  </span>
-                  {showResult && isCorrect && (
-                    <span style={{ color: "#10b981" }}>
-                      <Ic.Check />
+                    <span
+                      style={{
+                        fontFamily: "'DM Sans',sans-serif",
+                        fontSize: 11,
+                        color: isCorrect ? "#34d399" : "rgba(255,255,255,0.75)",
+                      }}
+                    >
+                      {opt}
                     </span>
-                  )}
-                </div>
+                    {isCorrect && (
+                      <span style={{ color: "#10b981" }}>
+                        <Ic.Check />
+                      </span>
+                    )}
+                  </div>
+                </>
               );
             })}
           </div>
 
           {/* Timer dot */}
-          <div
+          {/* <div
             style={{
               marginTop: 14,
               display: "flex",
@@ -255,8 +228,7 @@ export default function HomePhoneMockup() {
                 background: "#10b981",
                 animation: "pulse 1.5s ease-in-out infinite",
               }}
-            />
-            <span
+            /><span
               style={{
                 fontFamily: "'DM Sans',sans-serif",
                 fontSize: 10,
@@ -265,7 +237,7 @@ export default function HomePhoneMockup() {
             >
               {answered ? "Explication disponible" : "30 secondes restantes"}
             </span>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>
