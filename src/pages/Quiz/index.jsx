@@ -13,11 +13,6 @@ function Quiz() {
 
   function startQuiz() {}
 
-  useEffect(() => {
-    console.log("param name ", params.name);
-    console.log("location name ", location);
-  });
-
   return (
     <div>
       <Nav />

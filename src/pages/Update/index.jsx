@@ -45,7 +45,7 @@ function QuestionUpdate() {
 
       fetchedQuestions[0].choices = fetchedQuestions[0].choices.filter(
         (choice) =>
-          choice !== fetchedQuestions[0].choices[fetchedQuestions[0].answer]
+          choice !== fetchedQuestions[0].choices[fetchedQuestions[0].answer],
       );
 
       fetchedQuestions[0].answer2 = fetchedQuestions[0].choices[0];
@@ -98,7 +98,7 @@ function QuestionUpdate() {
       tags: tags.split(","),
       updatedAt: new Date(),
     };
-    console.log("up: ", updatedQuestionObject);
+
     await updateDoc(updatedQuestionRef, updatedQuestionObject);
 
     setMessage("question_updated");

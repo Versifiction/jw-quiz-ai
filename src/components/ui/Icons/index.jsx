@@ -69,38 +69,9 @@ export const Ic = {
       <path d="m96 48 96 80-96 80" />
     </svg>
   ),
-  Check: () => (
-    <svg
-      width="13"
-      height="13"
-      viewBox="0 0 256 256"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="24"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="m40 128 72 72L216 56" />
-    </svg>
-  ),
   Play: () => (
     <svg width="18" height="18" viewBox="0 0 256 256" fill="currentColor">
       <path d="M240 128a15.74 15.74 0 0 1-7.6 13.51L88.32 229.65a16 16 0 0 1-24.32-13.65V40a16 16 0 0 1 24.32-13.65l144.08 88.14A15.74 15.74 0 0 1 240 128Z" />
-    </svg>
-  ),
-  Shield: () => (
-    <svg
-      width="16"
-      height="16"
-      viewBox="0 0 256 256"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="14"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M40 114.79V56a8 8 0 0 1 8-8h160a8 8 0 0 1 8 8v58.77c0 84.18-71.31 112.42-87.41 117.91a8 8 0 0 1-5.18 0C107.31 227.21 40 199 40 114.79Z" />
-      <path d="m96 132 24 24 40-48" />
     </svg>
   ),
   Quote: () => (
@@ -177,25 +148,6 @@ export const Ic = {
         stroke="none"
       />
       <path d="M128 144v-8c18 0 32-13.43 32-29.63C160 89.43 145.72 76 128 76c-16.07 0-29.42 11.3-31.67 26.2" />
-    </svg>
-  ),
-  Users: () => (
-    <svg
-      width="16"
-      height="16"
-      viewBox="0 0 256 256"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="16"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M84 168c0-33.14 19.6-60 44-60s44 26.86 44 60" />
-      <circle cx="128" cy="72" r="36" />
-      <path d="M196 184c0-28.37 12.54-52 30-60" />
-      <circle cx="196" cy="100" r="28" />
-      <path d="M60 184c0-28.37-12.54-52-30-60" />
-      <circle cx="60" cy="100" r="28" />
     </svg>
   ),
   Plus: () => (

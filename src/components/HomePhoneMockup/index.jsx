@@ -170,7 +170,6 @@ export default function HomePhoneMockup() {
             </div>
             {cur.opts.map((opt, i) => {
               const isCorrect = i === cur.ans;
-              console.log("cur : ", cur);
               // const showResult = answered;
               return (
                 <>
