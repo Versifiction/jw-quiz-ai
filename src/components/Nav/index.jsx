@@ -2,18 +2,19 @@ import { useState, useEffect } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
+import { Link } from "react-router-dom";
 
 import { auth, db } from "../../config/firebase";
 import UserAvatar from "../ui/UserAvatar";
 import { Ic } from "../ui/Icons";
 import Logo from "../ui/Logo";
+import { navLinks } from "../../utils/shapes/navLinks";
 
 function Nav() {
   const [user] = useAuthState(auth);
   const em = "#10b981";
   const [navScrolled, setNavScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const navLinks = ["Catégories", "Classement", "À propos", "Rejoindre"];
 
   useEffect(() => {
     const fn = () => setNavScrolled(window.scrollY > 32);
@@ -145,9 +146,9 @@ function Nav() {
           style={{ display: "flex", alignItems: "center", gap: 32 }}
         >
           {navLinks.slice(0, -1).map((l) => (
-            <a
+            <Link
               key={l}
-              href="#"
+              to={l.href}
               style={{
                 fontFamily: "'DM Sans',sans-serif",
                 fontSize: 14,
@@ -160,11 +161,11 @@ function Nav() {
                 (e.target.style.color = "rgba(255,255,255,0.5)")
               }
             >
-              {l}
-            </a>
+              {l.name}
+            </Link>
           ))}
-          <a
-            href="#"
+          <Link
+            to="/play"
             style={{
               display: "inline-flex",
               alignItems: "center",
@@ -195,7 +196,7 @@ function Nav() {
           >
             Jouer
             <Ic.ChevR />
-          </a>
+          </Link>
           {!user ? (
             <div
               className="cursor-pointer w-3 h-3"

@@ -1,15 +1,9 @@
 import { Link } from "react-router-dom";
 
 import Logo from "../ui/Logo";
+import { footerLinks } from "../../utils/shapes/footerLinks";
 
 const Footer = () => {
-  const footerLinks = [
-    { name: "Mentions légales", href: "/mentions" },
-    { name: "À propos", href: "/about" },
-    { name: "Contact", href: "/contact" },
-    { name: "FAQ", href: "/faq" },
-  ];
-
   return (
     <footer
       style={{
