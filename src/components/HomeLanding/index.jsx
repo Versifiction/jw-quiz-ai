@@ -1,7 +1,8 @@
-"use client";
 import { useState, useEffect, useRef, useCallback } from "react";
+import { getFirestore } from "firebase/firestore";
 
 import HomePhoneMockup from "../HomePhoneMockup";
+import useCollection from "../../utils/hooks/useCollection";
 import { Ic } from "../ui/Icons";
 import Logo from "../ui/Logo";
 
@@ -108,13 +109,6 @@ const TESTIMONIALS = [
     author: "Diacre J.-P. Mbuyi",
     role: "Communauté évangélique, Kinshasa",
   },
-];
-
-const STATS = [
-  { val: "12 400+", label: "Membres actifs" },
-  { val: "295", label: "Questions vérifiées" },
-  { val: "6", label: "Catégories bibliques" },
-  { val: "98.3%", label: "Taux de satisfaction" },
 ];
 
 /* ─── Spotlight card ─────────────────────────────────────────────────────*/
@@ -269,7 +263,7 @@ function Reveal({ children, delay = 0 }) {
 /* ════════════════════════════════════════════════════════════════════════
    LANDING PAGE
 ════════════════════════════════════════════════════════════════════════ */
-export default function QuizLanding() {
+export default function QuizLanding({ firebaseApp }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeCat, setActiveCat] = useState(null);
 
@@ -280,6 +274,18 @@ export default function QuizLanding() {
   const emDim = "rgba(16,185,129,0.12)";
 
   const navLinks = ["Catégories", "Classement", "À propos", "Rejoindre"];
+
+  const db = firebaseApp ? getFirestore(firebaseApp) : null;
+
+  const { data: totalQuestions } = useCollection(db, "questions");
+  const { data: totalUsers } = useCollection(db, "users");
+  const { data: totalQuizzes } = useCollection(db, "quizzes");
+
+  const STATS = [
+    { val: totalUsers.length, label: "Utilisateurs" },
+    { val: totalQuestions.length, label: "Questions" },
+    { val: totalQuizzes.length, label: "Quiz" },
+  ];
 
   return (
     <div
@@ -369,7 +375,7 @@ export default function QuizLanding() {
                 12 400 membres actifs ce mois
               </span>
             </div> */}
-            <Logo width={60} height={60} fontSize={48} />
+            <Logo width={60} height={60} />
             {/* H1 — left-aligned, tracking-tighter */}
             <h1
               style={{
@@ -579,12 +585,11 @@ export default function QuizLanding() {
         <div style={{ padding: "0 0 64px" }}>
           <Marquee
             items={[
-              "295 questions vérifiées",
-              "6 catégories bibliques",
-              "Explications experts",
-              "Classement en temps réel",
+              `${totalQuestions.length} questions`,
+              "66 livres bibliques",
+              "Explications aux réponses",
+              "Quiz réalisés sauvegardés",
               "3 niveaux de difficulté",
-              "Bonus de rapidité",
               "Aucune inscription requise",
               "Accès mobile optimisé",
             ]}
@@ -604,7 +609,7 @@ export default function QuizLanding() {
           <div
             style={{
               display: "grid",
-              gridTemplateColumns: "repeat(4,1fr)",
+              gridTemplateColumns: "repeat(3,1fr)",
               gap: 2,
               background: "rgba(255,255,255,0.04)",
               border: "1px solid rgba(255,255,255,0.07)",
@@ -1206,20 +1211,20 @@ export default function QuizLanding() {
 
         {[
           {
-            title: "Explications vérifiées par des experts",
-            body: "Chaque réponse, correcte ou non, dévoile un contexte scripturaire rédigé par des théologiens. Vos erreurs deviennent des leçons durables.",
+            title: "Des quiz divers et variés",
+            body: "Vous pouvez choisir un quiz en fonction de sa difficulté, d'un livre de la Bible ou d'un personnage biblique",
             tag: "Pédagogie",
             icon: Ic.Book,
           },
           {
-            title: "Classement compétitif en temps réel",
-            body: "Votre rang se recalcule à chaque session. Comparez vos résultats par catégorie, par semaine, ou sur la totalité de votre parcours.",
+            title: "Sauvegarde de votre progression",
+            body: "En jouant en étant connecté, votre progression dans les quiz est sauvegardée et vous pouvez reprendre aux quiz pas encore réalisés",
             tag: "Motivation",
             icon: Ic.Trophy,
           },
           {
-            title: "Trois niveaux, un seul parcours",
-            body: "Du débutant au lettré. Progressez à votre rythme — l'algorithme adapte la difficulté à vos réponses passées pour maximiser la rétention.",
+            title: "Un mode multijoueur",
+            body: "Vous pouvez faire des parties en direct avec un ou plusieurs amis afin de vous défier tout en vous amusant (bientôt)",
             tag: "Progression",
             icon: Ic.Star,
           },
@@ -1469,7 +1474,7 @@ export default function QuizLanding() {
                   marginBottom: 14,
                 }}
               >
-                Prêt à éprouver
+                Prêt à tester
                 <br />
                 <span
                   style={{
@@ -1491,8 +1496,8 @@ export default function QuizLanding() {
                   lineHeight: 1.65,
                 }}
               >
-                Inscription gratuite. Aucune carte bancaire. Commencez en 30
-                secondes.
+                Toutes les fonctionnalités du site sont gratuites et prêtes à
+                être utilisées
               </p>
             </div>
 
@@ -1534,7 +1539,7 @@ export default function QuizLanding() {
                   (e.currentTarget.style.transform = "scale(0.97)")
                 }
               >
-                <Ic.Play /> Commencer maintenant
+                <Ic.Play /> Jouer maintenant
               </a>
               <a
                 href="#"
@@ -1558,106 +1563,12 @@ export default function QuizLanding() {
                   (e.target.style.color = "rgba(255,255,255,0.4)")
                 }
               >
-                Voir une démonstration
+                Se connecter
               </a>
             </div>
           </div>
         </section>
       </Reveal>
-
-      {/* ── FOOTER ────────────────────────────────────────────────────────── */}
-      <footer
-        style={{
-          borderTop: "1px solid rgba(255,255,255,0.06)",
-          padding: "32px clamp(20px,4vw,48px)",
-          display: "flex",
-          flexDirection: "column",
-          gap: 24,
-        }}
-      >
-        <div
-          style={{
-            maxWidth: 1200,
-            margin: "0 auto",
-            width: "100%",
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            flexWrap: "wrap",
-            gap: 16,
-          }}
-        >
-          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            <div
-              style={{
-                width: 24,
-                height: 24,
-                borderRadius: 7,
-                background: `linear-gradient(135deg,${em},#059669)`,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <svg
-                width="11"
-                height="11"
-                viewBox="0 0 22 22"
-                fill="none"
-                stroke="#fff"
-                strokeWidth="1.8"
-                strokeLinecap="round"
-              >
-                <path d="M11 1 L13.5 8 L21 11 L13.5 14 L11 21 L8.5 14 L1 11 L8.5 8 Z" />
-              </svg>
-            </div>
-            <span
-              style={{
-                fontFamily: "'Outfit',sans-serif",
-                fontSize: 14,
-                fontWeight: 700,
-                color: "rgba(255,255,255,0.6)",
-              }}
-            >
-              Scriptura
-            </span>
-          </div>
-          <div style={{ display: "flex", gap: 24, flexWrap: "wrap" }}>
-            {["Confidentialité", "Conditions", "Contact", "À propos"].map(
-              (l) => (
-                <a
-                  key={l}
-                  href="#"
-                  style={{
-                    fontFamily: "'DM Sans',sans-serif",
-                    fontSize: 12,
-                    color: "rgba(255,255,255,0.3)",
-                    textDecoration: "none",
-                    transition: "color 0.2s",
-                  }}
-                  onMouseEnter={(e) =>
-                    (e.target.style.color = "rgba(255,255,255,0.7)")
-                  }
-                  onMouseLeave={(e) =>
-                    (e.target.style.color = "rgba(255,255,255,0.3)")
-                  }
-                >
-                  {l}
-                </a>
-              ),
-            )}
-          </div>
-          <span
-            style={{
-              fontFamily: "'DM Sans',sans-serif",
-              fontSize: 12,
-              color: "rgba(255,255,255,0.2)",
-            }}
-          >
-            © 2026 Scriptura · Tous droits réservés
-          </span>
-        </div>
-      </footer>
     </div>
   );
 }

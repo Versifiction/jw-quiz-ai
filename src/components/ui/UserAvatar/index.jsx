@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../../../config/firebase";
 
-export default function UserAvatar({ userId }) {
+export default function UserAvatar({ userId, width, height }) {
   const [avatarUrl, setAvatarUrl] = useState(null);
   const [userName, setUserName] = useState("");
   const [loading, setLoading] = useState(true);
@@ -51,8 +52,8 @@ export default function UserAvatar({ userId }) {
     return (
       <div
         style={{
-          width: 30,
-          height: 30,
+          width: width || 30,
+          height: height || 30,
           borderRadius: "50%",
           background: "#1a1a2e",
           animation: "shimmer 1.4s ease-in-out infinite",
@@ -71,8 +72,8 @@ export default function UserAvatar({ userId }) {
     return (
       <div
         style={{
-          width: 30,
-          height: 30,
+          width: width || 30,
+          height: height || 30,
           borderRadius: "50%",
           background: "#10b981",
           display: "flex",
@@ -90,16 +91,18 @@ export default function UserAvatar({ userId }) {
   }
 
   return (
-    <img
-      src={avatarUrl}
-      alt={`Avatar de ${userName}`}
-      width={30}
-      height={30}
-      style={{ borderRadius: "50%", objectFit: "cover", display: "block" }}
-      onError={(e) => {
-        // Si l'image est cassée, on affiche les initiales
-        e.currentTarget.style.display = "none";
-      }}
-    />
+    <Link to="/me">
+      <img
+        src={avatarUrl}
+        alt={`Avatar de ${userName}`}
+        width={width || 30}
+        height={height || 30}
+        style={{ borderRadius: "50%", objectFit: "cover", display: "block" }}
+        // onError={(e) => {
+        //   // Si l'image est cassée, on affiche les initiales
+        //   e.currentTarget.style.display = "none";
+        // }}
+      />
+    </Link>
   );
 }

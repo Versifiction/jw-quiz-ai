@@ -1,244 +1,17 @@
 "use client";
 import { useState, useEffect, useRef, useCallback } from "react";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { getFirestore, where } from "firebase/firestore";
+import { format, formatDistanceToNow } from "date-fns";
+import { fr } from "date-fns/locale";
 
-/* ─── No external deps. All icons inline SVG, strokeWidth 1.5 ─────────────*/
-const Ic = {
-  Star: () => (
-    <svg width="14" height="14" viewBox="0 0 256 256" fill="currentColor">
-      <path d="m234.5 114.38-45.1 39.36 13.51 58.6a16 16 0 0 1-23.84 17.34l-51.11-31-51 31a16 16 0 0 1-23.84-17.34l13.49-58.54-45.11-39.42a16 16 0 0 1 9.12-28.06l59.46-5.15 23.21-55.36a15.95 15.95 0 0 1 29.44 0L166 81.17l59.44 5.15a16 16 0 0 1 9.11 28.06Z" />
-    </svg>
-  ),
-  Trophy: () => (
-    <svg
-      width="14"
-      height="14"
-      viewBox="0 0 256 256"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="14"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M56 56v56a72 72 0 0 0 144 0V56Z" />
-      <path d="M56 80H24a8 8 0 0 0-8 8v24a48 48 0 0 0 48 48h0M200 80h32a8 8 0 0 1 8 8v24a48 48 0 0 1-48 48h0" />
-      <path d="M128 184v40M96 224h64" />
-    </svg>
-  ),
-  Calendar: () => (
-    <svg
-      width="13"
-      height="13"
-      viewBox="0 0 256 256"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="16"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <rect x="32" y="48" width="192" height="192" rx="8" />
-      <path d="M176 24v48M80 24v48M32 104h192" />
-    </svg>
-  ),
-  Clock: () => (
-    <svg
-      width="13"
-      height="13"
-      viewBox="0 0 256 256"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="16"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <circle cx="128" cy="128" r="104" />
-      <path d="M128 72v56l40 40" />
-    </svg>
-  ),
-  Fire: () => (
-    <svg
-      width="14"
-      height="14"
-      viewBox="0 0 256 256"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="14"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M160 16s-16 48-56 80c-22.4 17.9-32 42-32 66a56 56 0 0 0 112 0c0-30-14-50-14-50s-4 18-18 30c0 0 8-50-8-74s16-52 16-52Z" />
-    </svg>
-  ),
-  Lightning: () => (
-    <svg width="13" height="13" viewBox="0 0 256 256" fill="currentColor">
-      <path d="m213.85 125.46-112 120a8 8 0 0 1-13.69-7l14.66-76.34-57.6-21.74a8 8 0 0 1-2.47-13.18l112-120a8 8 0 0 1 13.69 7l-14.66 76.34 57.6 21.74a8 8 0 0 1 2.47 13.18Z" />
-    </svg>
-  ),
-  Globe: () => (
-    <svg
-      width="13"
-      height="13"
-      viewBox="0 0 256 256"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="14"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <circle cx="128" cy="128" r="104" />
-      <path d="M168 128c0 40-18 80-40 104M88 128c0 40 18 80 40 104M168 128c0-40-18-80-40-104M88 128c0-40 18-80 40-104M24 128h208" />
-    </svg>
-  ),
-  Check: () => (
-    <svg
-      width="12"
-      height="12"
-      viewBox="0 0 256 256"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="24"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="m40 128 72 72L216 56" />
-    </svg>
-  ),
-  Lock: () => (
-    <svg
-      width="12"
-      height="12"
-      viewBox="0 0 256 256"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="16"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <rect x="40" y="112" width="176" height="128" rx="8" />
-      <path d="M88 112V80a40 40 0 0 1 80 0v32" />
-    </svg>
-  ),
-  ArrowUp: () => (
-    <svg
-      width="11"
-      height="11"
-      viewBox="0 0 256 256"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="22"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="m48 208 80-160 80 160" />
-    </svg>
-  ),
-  ArrowDn: () => (
-    <svg
-      width="11"
-      height="11"
-      viewBox="0 0 256 256"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="22"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="m48 48 80 160 80-160" />
-    </svg>
-  ),
-  Book: () => (
-    <svg
-      width="13"
-      height="13"
-      viewBox="0 0 256 256"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="14"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M48 80a96 96 0 0 1 80-16 96 96 0 0 1 80 16v128a96 96 0 0 0-80-16 96 96 0 0 0-80 16Z" />
-      <path d="M128 64v176" />
-    </svg>
-  ),
-  ChevR: () => (
-    <svg
-      width="12"
-      height="12"
-      viewBox="0 0 256 256"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="22"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="m96 48 96 80-96 80" />
-    </svg>
-  ),
-  Shield: () => (
-    <svg
-      width="13"
-      height="13"
-      viewBox="0 0 256 256"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="14"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M40 114.79V56a8 8 0 0 1 8-8h160a8 8 0 0 1 8 8v58.77c0 84.18-71.31 112.42-87.41 117.91a8 8 0 0 1-5.18 0C107.31 227.21 40 199 40 114.79Z" />
-    </svg>
-  ),
-  Target: () => (
-    <svg
-      width="13"
-      height="13"
-      viewBox="0 0 256 256"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="14"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <circle cx="128" cy="128" r="104" />
-      <circle cx="128" cy="128" r="60" />
-      <circle cx="128" cy="128" r="16" />
-    </svg>
-  ),
-  Medal: () => (
-    <svg
-      width="13"
-      height="13"
-      viewBox="0 0 256 256"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="14"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="m96 32 32 80 32-80" />
-      <circle cx="128" cy="172" r="60" />
-      <path d="M92 156h72M92 188h72" />
-    </svg>
-  ),
-};
-
-/* ─── Design tokens ────────────────────────────────────────────────────────*/
-const T = {
-  bg: "#07050f",
-  surf: "#0f0a1e",
-  surf2: "#14102a",
-  em: "#10b981",
-  emDim: "rgba(16,185,129,0.10)",
-  emBrd: "rgba(16,185,129,0.25)",
-  err: "#ef4444",
-  warn: "#f59e0b",
-  info: "#6366f1",
-  border: "rgba(255,255,255,0.08)",
-  text: "#f1f5f9",
-  muted: "rgba(241,245,249,0.45)",
-  mono: "'JetBrains Mono', monospace",
-  sans: "'Outfit', sans-serif",
-};
+import { auth, db } from "../../config/firebase";
+import T from "../ui/DesignTokens";
+import inputStyle from "../ui/Input";
+import { Ic } from "../ui/Icons";
+import UserAvatar from "../../components/ui/UserAvatar";
+import useCollection from "../../utils/hooks/useCollection";
+import userTimestampToDate from "../../utils/functions/userTimestampToDate";
 
 /* ─── Mock user data (replace with Firebase) ───────────────────────────────*/
 const MOCK_USER = {
@@ -849,9 +622,9 @@ function ProfileSkeleton() {
   return (
     <div
       style={{
-        maxWidth: 1100,
+        maxWidth: 1200,
         margin: "0 auto",
-        padding: "60px clamp(16px,4vw,48px)",
+        padding: "80px 0",
         display: "flex",
         flexDirection: "column",
         gap: 24,
@@ -930,10 +703,14 @@ function ProfileSkeleton() {
 /* ══════════════════════════════════════════════════════════════════════════
    MAIN COMPONENT
 ══════════════════════════════════════════════════════════════════════════ */
-export default function UserProfile({ userId, firebaseApp }) {
-  // In production: fetch from Firebase using userId
-  // const db = firebaseApp ? getFirestore(firebaseApp) : null;
-  const [user, setUser] = useState(null);
+export default function ProfileInfos({ firebaseApp }) {
+  const [userS] = useAuthState(auth);
+  const [user, setUser] = useState();
+  const db = firebaseApp ? getFirestore(firebaseApp) : null;
+  const { data: userFromDatabase } = useCollection(db, "users", [
+    where("id", "==", userS?.uid),
+  ]);
+  console.log("userFromDatabase : ", userFromDatabase);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("history"); // "history" | "achievements"
 
@@ -944,7 +721,7 @@ export default function UserProfile({ userId, firebaseApp }) {
       setLoading(false);
     }, 900);
     return () => clearTimeout(t);
-  }, [userId]);
+  }, [user?.uid]);
 
   const overallPct = user ? fmt.pct(user.correctAnswers, user.totalAnswers) : 0;
   const successPct = user
@@ -990,9 +767,9 @@ export default function UserProfile({ userId, firebaseApp }) {
           style={{
             position: "relative",
             zIndex: 1,
-            maxWidth: 1100,
+            maxWidth: 1200,
             margin: "0 auto",
-            padding: "clamp(48px,6vw,80px) clamp(16px,4vw,48px) 80px",
+            padding: "80px 0",
           }}
         >
           {/* ── SECTION 1: HERO ──────────────────────────────────────────────*/}
@@ -1022,50 +799,8 @@ export default function UserProfile({ userId, firebaseApp }) {
                   margin: "0 auto 16px",
                 }}
               >
-                {/* Rotating halo */}
-                <div
-                  style={{
-                    position: "absolute",
-                    inset: -6,
-                    borderRadius: "50%",
-                    background: `conic-gradient(${T.em}, transparent 60%, ${T.em})`,
-                    animation: "haloRotate 4s linear infinite",
-                    opacity: 0.5,
-                  }}
-                />
-                <div
-                  style={{
-                    position: "absolute",
-                    inset: -4,
-                    borderRadius: "50%",
-                    background: T.bg,
-                  }}
-                />
                 {/* Avatar circle */}
-                <div
-                  style={{
-                    position: "relative",
-                    width: 96,
-                    height: 96,
-                    borderRadius: "50%",
-                    background: `${user.avatarColor}20`,
-                    border: `2px solid ${user.avatarColor}50`,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    fontFamily: T.sans,
-                    fontSize: 34,
-                    fontWeight: 800,
-                    color: user.avatarColor,
-                    letterSpacing: "-0.04em",
-                  }}
-                >
-                  {user.displayName
-                    .split(" ")
-                    .map((w) => w[0])
-                    .slice(0, 2)
-                    .join("")}
-                </div>
+                <UserAvatar userId={userS?.uid} width={96} height={96} />
                 {/* Online dot */}
                 <div
                   style={{
@@ -1093,9 +828,9 @@ export default function UserProfile({ userId, firebaseApp }) {
                   marginBottom: 4,
                 }}
               >
-                {user.displayName}
+                {userS?.displayName}
               </div>
-              <div
+              {/* <div
                 style={{
                   display: "inline-flex",
                   alignItems: "center",
@@ -1112,7 +847,7 @@ export default function UserProfile({ userId, firebaseApp }) {
                 }}
               >
                 <Ic.Shield /> {user.role}
-              </div>
+              </div> */}
 
               {/* Bio */}
               <p
@@ -1121,10 +856,11 @@ export default function UserProfile({ userId, firebaseApp }) {
                   fontSize: 13,
                   color: T.muted,
                   lineHeight: 1.65,
+                  marginTop: 20,
                   marginBottom: 20,
                 }}
               >
-                {user.bio}
+                {userFromDatabase[0]?.description}
               </p>
 
               {/* Meta info — divide-y (anti-card-overuse Rule 4) */}
@@ -1141,9 +877,18 @@ export default function UserProfile({ userId, firebaseApp }) {
                   { icon: Ic.Globe, label: user.location },
                   {
                     icon: Ic.Calendar,
-                    label: `Membre depuis ${fmt.date(user.createdAt)}`,
+                    label: `Membre depuis le ${userFromDatabase.length > 0 && format(new Date(userFromDatabase[0]?.createdAt?.seconds * 1000), "dd/MM/yyyy")}`,
                   },
-                  { icon: Ic.Clock, label: `Vu ${fmt.rel(user.lastLoginAt)}` },
+                  {
+                    icon: Ic.Clock,
+                    label: `Vu il y a ${
+                      userFromDatabase.length > 0 &&
+                      formatDistanceToNow(
+                        new Date(userFromDatabase[0]?.lastSeen?.seconds * 1000),
+                        { locale: fr },
+                      )
+                    }`,
+                  },
                 ].map((item, i) => (
                   <div
                     key={i}
@@ -1192,7 +937,7 @@ export default function UserProfile({ userId, firebaseApp }) {
                     letterSpacing: "0.06em",
                   }}
                 >
-                  {user.id}
+                  {userFromDatabase[0]?.id}
                 </span>
               </div>
             </SpotCard>

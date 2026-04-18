@@ -12,7 +12,7 @@ const Questions = lazy(() => import("./pages/Questions"));
 const Update = lazy(() => import("./pages/Update"));
 const Add = lazy(() => import("./pages/Add"));
 const Quiz = lazy(() => import("./pages/Quiz"));
-const Me = lazy(() => import("./pages/Me"));
+const Profile = lazy(() => import("./pages/Profile"));
 const Versions = lazy(() => import("./pages/Versions"));
 const Faq = lazy(() => import("./pages/Faq"));
 const Error = lazy(() => import("./pages/Error"));
@@ -30,7 +30,7 @@ function Router() {
         <Route path="/update/:type?/:id?" exact element={<Update />} />
         <Route path="/add" exact element={<Add />} />
         <Route path="/quiz/:type?/:name?" exact element={<Quiz />} />
-        <Route path="/me" exact element={<Me />} />
+        <Route path="/me" exact element={<Profile />} />
         <Route path="/versions" exact element={<Versions />} />
         <Route path="/faq" exact element={<Faq />} />
         <Route path="*" element={<Error />} />

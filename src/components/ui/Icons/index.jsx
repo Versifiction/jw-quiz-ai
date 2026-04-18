@@ -20,6 +20,32 @@ export const Ic = {
       <path d="m213.85 125.46-112 120a8 8 0 0 1-13.69-7l14.66-76.34-57.6-21.74a8 8 0 0 1-2.47-13.18l112-120a8 8 0 0 1 13.69 7l-14.66 76.34 57.6 21.74a8 8 0 0 1 2.47 13.18Z" />
     </svg>
   ),
+  Login: () => (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      height="24"
+      width="24"
+    >
+      <g id="login">
+        <path
+          id="Union"
+          fill="#000000"
+          d="M19 3c1.1046 0 2 0.89543 2 2v14c0 1.1046 -0.8954 2 -2 2h-9c-0.55228 0 -1 -0.4477 -1 -1s0.44772 -1 1 -1h9V5h-9c-0.55228 0 -1 -0.44772 -1 -1s0.44772 -1 1 -1zM9.54297 8.04297c0.39051 -0.39044 1.02353 -0.39044 1.41403 0l3.25 3.25003c0.0478 0.0478 0.0906 0.1006 0.128 0.1572 0.0247 0.0375 0.0462 0.0764 0.0654 0.1162 0.0218 0.0452 0.0408 0.092 0.0557 0.1406 0.0061 0.0203 0.0107 0.041 0.0156 0.0616 0.0176 0.0743 0.0283 0.1517 0.0283 0.2314 0 0.083 -0.0122 0.1632 -0.0312 0.2402 -0.0042 0.0169 -0.0077 0.0341 -0.0127 0.0508 -0.0149 0.049 -0.0338 0.0962 -0.0557 0.1416 -0.02 0.0417 -0.0432 0.082 -0.0693 0.1211 -0.0126 0.0188 -0.0263 0.0368 -0.0401 0.0547 -0.026 0.0338 -0.053 0.0677 -0.084 0.0986l-3.25 3.25c-0.3905 0.3905 -1.02352 0.3905 -1.41403 0 -0.39045 -0.3905 -0.39047 -1.0235 0 -1.414L11.0859 13H4c-0.55226 0 -0.99996 -0.4478 -1 -1 0.00007 -0.5522 0.44776 -1 1 -1h7.0859L9.54297 9.45703c-0.39045 -0.39052 -0.39047 -1.02355 0 -1.41406"
+          stroke-width="1"
+        ></path>
+      </g>
+    </svg>
+  ),
+  User: () => (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
+      <path
+        fill="rgb(255, 255, 255, 0.5)"
+        d="M144 128a80 80 0 1 1 160 0 80 80 0 1 1 -160 0zm208 0a128 128 0 1 0 -256 0 128 128 0 1 0 256 0zM48 480c0-70.7 57.3-128 128-128l96 0c70.7 0 128 57.3 128 128l0 8c0 13.3 10.7 24 24 24s24-10.7 24-24l0-8c0-97.2-78.8-176-176-176l-96 0C78.8 304 0 382.8 0 480l0 8c0 13.3 10.7 24 24 24s24-10.7 24-24l0-8z"
+      />
+    </svg>
+  ),
   Users: () => (
     <svg
       width="16"
@@ -324,22 +350,6 @@ export const Ic = {
       <path d="M32 208a104 104 0 0 0 168-8.8" />
     </svg>
   ),
-  Trophy: () => (
-    <svg
-      width="13"
-      height="13"
-      viewBox="0 0 256 256"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="16"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M56 56v56a72 72 0 0 0 144 0V56Z" />
-      <path d="M56 80H24a8 8 0 0 0-8 8v24a48 48 0 0 0 48 48h0M200 80h32a8 8 0 0 1 8 8v24a48 48 0 0 1-48 48h0" />
-      <path d="M128 184v40M96 224h64" />
-    </svg>
-  ),
   Star: () => (
     <svg width="12" height="12" viewBox="0 0 256 256" fill="currentColor">
       <path d="m234.5 114.38-45.1 39.36 13.51 58.6a16 16 0 0 1-23.84 17.34l-51.11-31-51 31a16 16 0 0 1-23.84-17.34l13.49-58.54-45.11-39.42a16 16 0 0 1 9.12-28.06l59.46-5.15 23.21-55.36a15.95 15.95 0 0 1 29.44 0L166 81.17l59.44 5.15a16 16 0 0 1 9.11 28.06Z" />
@@ -356,6 +366,125 @@ export const Ic = {
       strokeLinecap="round"
     >
       <path d="M40 128h176M40 64h176M40 192h176" />
+    </svg>
+  ),
+  Calendar: () => (
+    <svg
+      width="13"
+      height="13"
+      viewBox="0 0 256 256"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="16"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <rect x="32" y="48" width="192" height="192" rx="8" />
+      <path d="M176 24v48M80 24v48M32 104h192" />
+    </svg>
+  ),
+  Clock: () => (
+    <svg
+      width="13"
+      height="13"
+      viewBox="0 0 256 256"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="16"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <circle cx="128" cy="128" r="104" />
+      <path d="M128 72v56l40 40" />
+    </svg>
+  ),
+  Fire: () => (
+    <svg
+      width="14"
+      height="14"
+      viewBox="0 0 256 256"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="14"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M160 16s-16 48-56 80c-22.4 17.9-32 42-32 66a56 56 0 0 0 112 0c0-30-14-50-14-50s-4 18-18 30c0 0 8-50-8-74s16-52 16-52Z" />
+    </svg>
+  ),
+  Lock: () => (
+    <svg
+      width="12"
+      height="12"
+      viewBox="0 0 256 256"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="16"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <rect x="40" y="112" width="176" height="128" rx="8" />
+      <path d="M88 112V80a40 40 0 0 1 80 0v32" />
+    </svg>
+  ),
+  ArrowUp: () => (
+    <svg
+      width="11"
+      height="11"
+      viewBox="0 0 256 256"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="22"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="m48 208 80-160 80 160" />
+    </svg>
+  ),
+  ArrowDn: () => (
+    <svg
+      width="11"
+      height="11"
+      viewBox="0 0 256 256"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="22"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="m48 48 80 160 80-160" />
+    </svg>
+  ),
+  Target: () => (
+    <svg
+      width="13"
+      height="13"
+      viewBox="0 0 256 256"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="14"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <circle cx="128" cy="128" r="104" />
+      <circle cx="128" cy="128" r="60" />
+      <circle cx="128" cy="128" r="16" />
+    </svg>
+  ),
+  Medal: () => (
+    <svg
+      width="13"
+      height="13"
+      viewBox="0 0 256 256"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="14"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="m96 32 32 80 32-80" />
+      <circle cx="128" cy="172" r="60" />
+      <path d="M92 156h72M92 188h72" />
     </svg>
   ),
 };

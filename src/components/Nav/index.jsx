@@ -1,15 +1,29 @@
-import { useEffect } from "react";
-import { auth, db } from "../../config/firebase";
+import { useState, useEffect } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
-import { Link } from "react-router-dom";
-import { LuLogIn } from "react-icons/lu";
 import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 
-import jwLogo from "../../assets/jwquiz.png";
+import { auth, db } from "../../config/firebase";
+import UserAvatar from "../ui/UserAvatar";
+import { Ic } from "../ui/Icons";
+import Logo from "../ui/Logo";
 
 function Nav() {
   const [user] = useAuthState(auth);
+  const em = "#10b981";
+  const [navScrolled, setNavScrolled] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const navLinks = ["Catégories", "Classement", "À propos", "Rejoindre"];
+
+  useEffect(() => {
+    const fn = () => setNavScrolled(window.scrollY > 32);
+    window.addEventListener("scroll", fn, { passive: true });
+    return () => window.removeEventListener("scroll", fn);
+  }, []);
+
+  useEffect(() => {
+    console.log("user : ", user);
+  }, [user]);
 
   useEffect(() => {
     async function addOrUpdateUserInDatabase() {
@@ -24,6 +38,7 @@ function Nav() {
         } else {
           await setDoc(userRef, {
             createdAt: new Date(),
+            description: "",
             displayName: user?.displayName,
             email: user?.email,
             lastSeen: new Date(),
@@ -43,41 +58,177 @@ function Nav() {
   }
 
   return (
-    <nav className="bg-white border-gray-200 dark:bg-gray-900">
-      <div className="max-w-screen-md flex flex-wrap items-center justify-between mx-auto p-4">
-        {/* <h2 className="text-[#4A6DA7] font-bold text-3xl text-center py-2">
-          <Link to="/">BibleQuiz</Link>
-        </h2> */}
-        <div>
-          {/* <Link to="/">
-            <img src={jwLogo} className="w-12" />
-          </Link> */}
-          <Link to="/">
-            <h1>BibleQuiz</h1>
-          </Link>
-        </div>
-        <div className="flex items-center md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
-          {user ? (
-            <Link to="/me">
-              <button
-                type="button"
-                className="flex text-sm bg-gray-800 rounded-full md:me-0 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600"
-                id="user-menu-button"
-                aria-expanded="false"
-                data-dropdown-toggle="user-dropdown"
-                data-dropdown-placement="bottom"
+    <nav
+      style={{
+        position: "fixed",
+        top: 0,
+        left: 0,
+        right: 0,
+        zIndex: 50,
+        padding: "0 clamp(20px,4vw,48px)",
+        height: 64,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        background: navScrolled ? `rgba(7,5,15,0.92)` : "transparent",
+        borderBottom: navScrolled ? "1px solid rgba(255,255,255,0.07)" : "none",
+        backdropFilter: navScrolled ? "blur(20px)" : "none",
+        transition: "all 0.4s cubic-bezier(0.16,1,0.3,1)",
+      }}
+    >
+      <div
+        style={{
+          maxWidth: 1200,
+          margin: "0 auto",
+          width: "100%",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          flexWrap: "wrap",
+          gap: 16,
+        }}
+      >
+        <Logo width={30} height={30} fontSize={16} />
+        {/* Mobile menu */}
+        {menuOpen && (
+          <div
+            style={{
+              position: "fixed",
+              inset: 0,
+              zIndex: 49,
+              background: "rgba(7,5,15,0.97)",
+              backdropFilter: "blur(20px)",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: 36,
+              animation: "fadeIn 0.25s ease",
+            }}
+          >
+            <button
+              onClick={() => setMenuOpen(false)}
+              style={{
+                position: "absolute",
+                top: 20,
+                right: 24,
+                background: "none",
+                border: "none",
+                cursor: "pointer",
+                color: "rgba(255,255,255,0.4)",
+                fontSize: 24,
+              }}
+            >
+              ✕
+            </button>
+            {navLinks.map((l) => (
+              <a
+                key={l}
+                href="#"
+                onClick={() => setMenuOpen(false)}
+                style={{
+                  fontFamily: "'Outfit',sans-serif",
+                  fontSize: 20,
+                  fontWeight: 600,
+                  color: "rgba(255,255,255,0.8)",
+                  textDecoration: "none",
+                }}
               >
-                <img
-                  className="w-12 h-12 rounded-full"
-                  src={user?.photoURL}
-                  alt="user photo"
-                />
-              </button>
-            </Link>
+                {l}
+              </a>
+            ))}
+          </div>
+        )}
+        {/* Desktop links */}
+        <div
+          className="nav-links"
+          style={{ display: "flex", alignItems: "center", gap: 32 }}
+        >
+          {navLinks.slice(0, -1).map((l) => (
+            <a
+              key={l}
+              href="#"
+              style={{
+                fontFamily: "'DM Sans',sans-serif",
+                fontSize: 14,
+                color: "rgba(255,255,255,0.5)",
+                textDecoration: "none",
+                transition: "color 0.2s",
+              }}
+              onMouseEnter={(e) => (e.target.style.color = "#fff")}
+              onMouseLeave={(e) =>
+                (e.target.style.color = "rgba(255,255,255,0.5)")
+              }
+            >
+              {l}
+            </a>
+          ))}
+          <a
+            href="#"
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 6,
+              padding: "9px 20px",
+              borderRadius: 99,
+              background: `linear-gradient(135deg,${em},#059669)`,
+              fontFamily: "'Outfit',sans-serif",
+              fontSize: 13,
+              fontWeight: 600,
+              color: "#fff",
+              textDecoration: "none",
+              boxShadow: `0 4px 20px rgba(16,185,129,.3)`,
+              transition: "all 0.25s cubic-bezier(0.16,1,0.3,1)",
+              transform: "scale(1)",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = "scale(1.04) translateY(-1px)";
+              e.currentTarget.style.boxShadow = `0 8px 28px rgba(16,185,129,.4)`;
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = "scale(1)";
+              e.currentTarget.style.boxShadow = `0 4px 20px rgba(16,185,129,.3)`;
+            }}
+            onMouseDown={(e) =>
+              (e.currentTarget.style.transform = "scale(0.97)")
+            }
+          >
+            Jouer
+            <Ic.ChevR />
+          </a>
+          {!user ? (
+            <div
+              className="cursor-pointer w-3 h-3"
+              style={{
+                color: "rgba(255,255,255,0.5)",
+              }}
+              onClick={googleSignIn}
+            >
+              <Ic.User />
+            </div>
           ) : (
-            <LuLogIn className="size-6 cursor-pointer" onClick={googleSignIn} />
+            <UserAvatar userId={user?.uid} />
           )}
         </div>
+
+        {/* Mobile burger */}
+        <button
+          onClick={() => setMenuOpen((m) => !m)}
+          className="burger"
+          style={{
+            background: "none",
+            border: "none",
+            cursor: "pointer",
+            color: "rgba(255,255,255,0.7)",
+            display: "none",
+          }}
+        >
+          <Ic.MenuX />
+        </button>
+
+        <style>{`
+          @media(max-width:767px){.nav-links{display:none!important}.burger{display:flex!important}}
+        `}</style>
       </div>
     </nav>
   );

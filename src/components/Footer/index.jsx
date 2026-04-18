@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 
-const em = "#10b981";
+import Logo from "../ui/Logo";
 
 const Footer = () => {
   const footerLinks = [
@@ -23,51 +23,16 @@ const Footer = () => {
     >
       <div
         style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
           maxWidth: 1200,
           margin: "0 auto",
           width: "100%",
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          flexWrap: "wrap",
-          gap: 16,
+          gap: 8,
         }}
       >
-        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          <div
-            style={{
-              width: 24,
-              height: 24,
-              borderRadius: 7,
-              background: `linear-gradient(135deg,${em},#059669)`,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <svg
-              width="11"
-              height="11"
-              viewBox="0 0 22 22"
-              fill="none"
-              stroke="#fff"
-              strokeWidth="1.8"
-              strokeLinecap="round"
-            >
-              <path d="M11 1 L13.5 8 L21 11 L13.5 14 L11 21 L8.5 14 L1 11 L8.5 8 Z" />
-            </svg>
-          </div>
-          <span
-            style={{
-              fontFamily: "'Outfit',sans-serif",
-              fontSize: 14,
-              fontWeight: 700,
-              color: "rgba(255,255,255,0.6)",
-            }}
-          >
-            Scriptura
-          </span>
-        </div>
+        <Logo width={30} height={30} />
         <div style={{ display: "flex", gap: 24, flexWrap: "wrap" }}>
           {footerLinks.map((l) => (
             <Link
@@ -90,7 +55,7 @@ const Footer = () => {
             </Link>
           ))}
         </div>
-        <span
+        {/* <span
           style={{
             fontFamily: "'DM Sans',sans-serif",
             fontSize: 12,
@@ -98,7 +63,7 @@ const Footer = () => {
           }}
         >
           © 2026 Scriptura · Tous droits réservés
-        </span>
+        </span> */}
       </div>
     </footer>
   );
