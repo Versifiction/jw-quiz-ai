@@ -9,6 +9,7 @@ import {
   serverTimestamp,
 } from "firebase/firestore";
 
+import DeleteModal from "../DeleteModal";
 import AdminQuestionModal from "../AdminQuestionModal";
 import UserAvatar from "../ui/UserAvatar";
 import useCollection from "../../utils/hooks/useCollection";

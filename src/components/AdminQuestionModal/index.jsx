@@ -6,6 +6,7 @@ import inputStyle from "../ui/Input";
 import { Ic } from "../ui/Icons";
 import Avatar from "../ui/Avatar";
 import Field from "../ui/Field";
+import Sk from "../ui/Sk";
 
 export default function AdminQuestionModal({
   question,
@@ -47,7 +48,7 @@ export default function AdminQuestionModal({
     if (!form.entitled.trim()) e.entitled = "La question est requise";
     if (form.choices.some((o) => !o.trim()))
       e.choices = "Toutes les options sont requises";
-    // if (!form.answer) e.answer = "Une bonne réponse est requise";
+    if (!form.answer) e.answer = "Une bonne réponse est requise";
     // if (!form.explanation.trim()) e.explanation = "L'explication est requise";
     setErrors(e);
     return Object.keys(e).length === 0;

@@ -1,11 +1,26 @@
+import { isWithinInterval, subWeeks } from "date-fns";
+
 import T from "../ui/DesignTokens";
 import Badge from "../ui/Badge";
 import Avatar from "../ui/Avatar";
 import KpiTile from "../ui/KpiTitle";
 
 export default function AdminDashboardTab({ questions, users }) {
-  const totalQ = questions.length;
-  const totalU = users.length;
+  const totalQuestions = questions.length;
+  const questionsCreatedThisMonth = questions.filter((q) =>
+    isWithinInterval(q.createdAt.seconds * 1000, {
+      start: subWeeks(new Date(), 4),
+      end: new Date(),
+    }),
+  );
+  const usersCreatedThisMonth = users.filter((q) =>
+    isWithinInterval(q.createdAt.seconds * 1000, {
+      start: subWeeks(new Date(), 4),
+      end: new Date(),
+    }),
+  );
+  console.log("questionsCreatedThisMonth : ", questionsCreatedThisMonth);
+  const totalUsers = users.length;
   const activeU = users.filter((u) => u.status !== "suspended").length;
   const avgPts = questions.reduce((s, q) => s + (q.points || 0), 0);
   const cats = [...new Set(questions.map((q) => q.category).filter(Boolean))];
@@ -20,7 +35,7 @@ export default function AdminDashboardTab({ questions, users }) {
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "repeat(4,1fr)",
+          gridTemplateColumns: "repeat(2,1fr)",
           background: T.surf,
           border: `1px solid ${T.border}`,
           borderRadius: 18,
@@ -30,18 +45,16 @@ export default function AdminDashboardTab({ questions, users }) {
       >
         <KpiTile
           label="Questions totales"
-          value={totalQ}
-          delta="+3 ce mois"
+          value={totalQuestions}
+          delta={`+${questionsCreatedThisMonth.length} ce mois`}
           color={T.em}
         />
         <KpiTile
           label="Membres inscrits"
-          value={totalU}
-          delta="+12 ce mois"
+          value={totalUsers}
+          delta={`+${usersCreatedThisMonth.length} ce mois`}
           color="#6366f1"
         />
-        <KpiTile label="Membres actifs" value={activeU} color={T.warn} />
-        <KpiTile label="Points cumulés" value={avgPts} color={T.em} />
       </div>
 
       {/* Two columns */}
@@ -70,7 +83,7 @@ export default function AdminDashboardTab({ questions, users }) {
           <div style={{ display: "flex", flexDirection: "column" }}>
             {cats.map((cat) => {
               const count = questions.filter((q) => q.category === cat).length;
-              const pct = Math.round((count / totalQ) * 100) || 0;
+              const pct = Math.round((count / totalQuestions) * 100) || 0;
               return (
                 <div
                   key={cat}
@@ -168,7 +181,9 @@ export default function AdminDashboardTab({ questions, users }) {
             { key: "difficile", label: "difficile", color: T.err },
           ].map((d) => {
             const count = diffDist[d.key];
-            const pct = totalQ ? Math.round((count / totalQ) * 100) : 0;
+            const pct = totalQuestions
+              ? Math.round((count / totalQuestions) * 100)
+              : 0;
             return (
               <div
                 key={d.key}

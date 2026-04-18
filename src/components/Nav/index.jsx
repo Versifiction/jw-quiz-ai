@@ -9,6 +9,7 @@ import UserAvatar from "../ui/UserAvatar";
 import { Ic } from "../ui/Icons";
 import Logo from "../ui/Logo";
 import { navLinks } from "../../utils/shapes/navLinks";
+import { admins } from "../../utils/shapes/admins";
 
 function Nav() {
   const [user] = useAuthState(auth);
@@ -123,9 +124,9 @@ function Nav() {
               ✕
             </button>
             {navLinks.map((l) => (
-              <a
+              <Link
                 key={l}
-                href="#"
+                to={l.href}
                 onClick={() => setMenuOpen(false)}
                 style={{
                   fontFamily: "'Outfit',sans-serif",
@@ -135,15 +136,15 @@ function Nav() {
                   textDecoration: "none",
                 }}
               >
-                {l}
-              </a>
+                {l.name}
+              </Link>
             ))}
           </div>
         )}
         {/* Desktop links */}
         <div
           className="nav-links"
-          style={{ display: "flex", alignItems: "center", gap: 32 }}
+          style={{ display: "flex", alignItems: "center", gap: 16 }}
         >
           {navLinks.slice(0, -1).map((l) => (
             <Link
@@ -161,7 +162,11 @@ function Nav() {
                 (e.target.style.color = "rgba(255,255,255,0.5)")
               }
             >
-              {l.name}
+              {l.name === "Admin"
+                ? admins.includes(user.email)
+                  ? l.name
+                  : ""
+                : l.name}
             </Link>
           ))}
           <Link
@@ -208,7 +213,9 @@ function Nav() {
               <Ic.User />
             </div>
           ) : (
-            <UserAvatar userId={user?.uid} />
+            <div className="ml-4">
+              <UserAvatar userId={user?.uid} />
+            </div>
           )}
         </div>
 
