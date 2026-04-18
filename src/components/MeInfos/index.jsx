@@ -702,11 +702,12 @@ function ProfileSkeleton() {
 /* ══════════════════════════════════════════════════════════════════════════
    MAIN COMPONENT
 ══════════════════════════════════════════════════════════════════════════ */
-export default function ProfileInfos({ firebaseApp, paramId }) {
+export default function ProfileInfos({ firebaseApp }) {
+  const [userS] = useAuthState(auth);
   const [user, setUser] = useState();
   const db = firebaseApp ? getFirestore(firebaseApp) : null;
   const { data: userFromDatabase } = useCollection(db, "users", [
-    where("id", "==", paramId),
+    where("id", "==", userS?.uid),
   ]);
   console.log("userFromDatabase : ", userFromDatabase);
   const [loading, setLoading] = useState(true);

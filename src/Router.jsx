@@ -26,6 +26,7 @@ function Router() {
         <Route path="/solo" exact element={<Solo />} />
         <Route path="/admin" exact element={<Admin />} />
         <Route path="/users" exact element={<Users />} />
+        <Route path="/user/:id" exact element={<Profile />} />
         <Route path="/questions" exact element={<Questions />} />
         <Route path="/update/:type?/:id?" exact element={<Update />} />
         <Route path="/add" exact element={<Add />} />
