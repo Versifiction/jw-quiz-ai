@@ -1,4 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { auth } from "../../config/firebase";
+import { useAuthState } from "react-firebase-hooks/auth";
 
 import emptyQuestion from "../../utils/shapes/emptyQuestion";
 import T from "../ui/DesignTokens";
@@ -7,6 +9,8 @@ import { Ic } from "../ui/Icons";
 import Avatar from "../ui/Avatar";
 import Field from "../ui/Field";
 import Sk from "../ui/Sk";
+import UserAvatar from "../ui/UserAvatar";
+import difficulties from "../../utils/shapes/difficulties";
 
 export default function AdminQuestionModal({
   question,
@@ -14,6 +18,8 @@ export default function AdminQuestionModal({
   onClose,
   saving,
 }) {
+  const [user] = useAuthState(auth);
+
   const isEdit = !!question?.id;
   const [form, setForm] = useState(
     isEdit
@@ -33,7 +39,9 @@ export default function AdminQuestionModal({
   );
 
   const [errors, setErrors] = useState({});
-  const DIFFICULTIES = ["facile", "moyen", "difficile"];
+  useEffect(() => {
+    console.log("form : ", form);
+  }, [form]);
 
   const setF = (key, val) => setForm((p) => ({ ...p, [key]: val }));
   const setOpt = (i, val) =>
@@ -49,7 +57,7 @@ export default function AdminQuestionModal({
     if (form.choices.some((o) => !o.trim()))
       e.choices = "Toutes les options sont requises";
     if (!form.answer) e.answer = "Une bonne réponse est requise";
-    // if (!form.explanation.trim()) e.explanation = "L'explication est requise";
+    if (!form.author) e.author = "L'auteur est requis";
     setErrors(e);
     return Object.keys(e).length === 0;
   };
@@ -146,7 +154,7 @@ export default function AdminQuestionModal({
 
         <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
           {/* Text */}
-          <Field label="Texte de la question" error={errors.entitled}>
+          <Field label="Titre de la question" error={errors.entitled}>
             <textarea
               value={form.entitled}
               onChange={(e) => setF("entitled", e.target.value)}
@@ -190,7 +198,32 @@ export default function AdminQuestionModal({
                 ))}
               </select>
             </Field> */}
-            <Field label="Difficulté">
+            <Field label="Auteur" error={errors.author}>
+              <select
+                value={form.author}
+                onChange={(e) => setF("author", e.target.value)}
+                placeholder="Auteur"
+                style={{
+                  ...inputStyle(false),
+                  cursor: "pointer",
+                  appearance: "none",
+                }}
+                onFocus={(e) =>
+                  (e.target.style.borderColor = errors.author
+                    ? T.errBrd
+                    : T.emBrd)
+                }
+                onBlur={(e) =>
+                  (e.target.style.borderColor = errors.author
+                    ? T.errBrd
+                    : T.border)
+                }
+              >
+                <option value="Auteur">Auteur</option>
+                <option value={user?.uid}>{user?.displayName}</option>
+              </select>
+            </Field>
+            <Field label="Difficulté" error={errors.difficulty}>
               <select
                 value={form.difficulty}
                 onChange={(e) => setF("difficulty", e.target.value)}
@@ -199,10 +232,20 @@ export default function AdminQuestionModal({
                   cursor: "pointer",
                   appearance: "none",
                 }}
+                onFocus={(e) =>
+                  (e.target.style.borderColor = errors.difficulty
+                    ? T.errBrd
+                    : T.emBrd)
+                }
+                onBlur={(e) =>
+                  (e.target.style.borderColor = errors.difficulty
+                    ? T.errBrd
+                    : T.border)
+                }
               >
-                {DIFFICULTIES.map((d) => (
-                  <option key={d} value={d}>
-                    {d}
+                {difficulties.map((d) => (
+                  <option key={d.key} value={d.key}>
+                    {d.name}
                   </option>
                 ))}
               </select>
@@ -286,6 +329,27 @@ export default function AdminQuestionModal({
                 (e.target.style.borderColor = errors.explanation
                   ? T.errBrd
                   : T.border)
+              }
+            />
+          </Field>
+          <Field
+            label="Tags"
+            helper="Permet de retrouver la question par tri"
+            error={errors.tags}
+          >
+            <textarea
+              value={form.tags}
+              onChange={(e) => setF("tags", e.target.value)}
+              rows={3}
+              placeholder="Exemple : adam,jesus,dieu"
+              style={{
+                ...inputStyle(errors.tags),
+                resize: "vertical",
+                lineHeight: 1.55,
+              }}
+              onFocus={(e) => (e.target.style.borderColor = T.emBrd)}
+              onBlur={(e) =>
+                (e.target.style.borderColor = errors.tags ? T.errBrd : T.border)
               }
             />
           </Field>

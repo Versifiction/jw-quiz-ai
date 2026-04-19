@@ -53,6 +53,7 @@ export default function AdminQuestionsTab({ db, toast }) {
   });
 
   const handleSave = async (form) => {
+    form.tags = form.tags.split(",");
     setSaving(true);
     try {
       if (modal?.question?.id) {
