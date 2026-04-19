@@ -1,12 +1,13 @@
 import T from "../DesignTokens";
 
 /* Pill badge */
-export default function Badge({ label, color = T.em }) {
+export default function Badge({ label, color = T.em, width }) {
   return (
     <span
       style={{
-        display: "inline-flex",
+        display: "flex",
         alignItems: "center",
+        justifyContent: "center",
         padding: "3px 9px",
         borderRadius: 99,
         background: `${color}18`,
@@ -15,6 +16,7 @@ export default function Badge({ label, color = T.em }) {
         fontSize: 10,
         color,
         letterSpacing: "0.05em",
+        width: width || "",
       }}
     >
       {label}

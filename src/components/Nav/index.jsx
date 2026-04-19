@@ -163,7 +163,7 @@ function Nav() {
               }
             >
               {l.name === "Admin"
-                ? admins.includes(user.email)
+                ? admins.includes(user?.email)
                   ? l.name
                   : ""
                 : l.name}
