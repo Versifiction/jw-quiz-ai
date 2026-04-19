@@ -1,8 +1,9 @@
+import T from "../../components/ui/DesignTokens";
+
 const difficulties = [
-  { name: "Facile", slug: "facile" },
-  { name: "Moyen", slug: "moyen" },
-  { name: "Difficile", slug: "difficile" },
-  { name: "Hardcore", slug: "hardcore" },
+  { name: "Facile", key: "facile", color: T.em },
+  { name: "Moyen", key: "moyen", color: T.warn },
+  { name: "Difficile", key: "difficile", color: T.err },
 ];
 
 export default difficulties;

@@ -4,6 +4,7 @@ import T from "../ui/DesignTokens";
 import Badge from "../ui/Badge";
 import Avatar from "../ui/Avatar";
 import KpiTile from "../ui/KpiTitle";
+import difficulties from "../../utils/shapes/difficulties";
 
 export default function AdminDashboardTab({ questions, users }) {
   const totalQuestions = questions.length;
@@ -19,10 +20,8 @@ export default function AdminDashboardTab({ questions, users }) {
       end: new Date(),
     }),
   );
-  console.log("questionsCreatedThisMonth : ", questionsCreatedThisMonth);
+  console.log("questions : ", questions);
   const totalUsers = users.length;
-  const activeU = users.filter((u) => u.status !== "suspended").length;
-  const avgPts = questions.reduce((s, q) => s + (q.points || 0), 0);
   const cats = [...new Set(questions.map((q) => q.category).filter(Boolean))];
   const diffDist = { facile: 0, moyen: 0, difficile: 0 };
   questions.forEach((q) => {
@@ -175,11 +174,7 @@ export default function AdminDashboardTab({ questions, users }) {
           >
             Répartition par difficulté
           </div>
-          {[
-            { key: "facile", label: "facile", color: T.em },
-            { key: "moyen", label: "moyen", color: T.warn },
-            { key: "difficile", label: "difficile", color: T.err },
-          ].map((d) => {
+          {difficulties.map((d) => {
             const count = diffDist[d.key];
             const pct = totalQuestions
               ? Math.round((count / totalQuestions) * 100)
@@ -195,7 +190,7 @@ export default function AdminDashboardTab({ questions, users }) {
                   borderBottom: `1px solid ${T.border}`,
                 }}
               >
-                <Badge label={d.label} color={d.color} />
+                <Badge label={d.name} color={d.color} width={80} />
                 <div
                   style={{
                     flex: 1,
