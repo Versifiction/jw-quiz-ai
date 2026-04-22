@@ -1,6 +1,8 @@
 "use client";
 import { useState, useEffect, useRef, useCallback } from "react";
 
+import versions from "../../utils/shapes/versions";
+
 /* ─── Design tokens ────────────────────────────────────────────────────────*/
 const T = {
   bg: "#07050f",
@@ -177,245 +179,6 @@ const Ic = {
     </svg>
   ),
 };
-
-/* ─── Changelog data ───────────────────────────────────────────────────────*/
-const VERSIONS = [
-  {
-    version: "2.4.0",
-    date: "17 avril 2026",
-    title: "Mode multijoueur",
-    current: true,
-    summary: "Affrontez vos amis en temps réel avec les salles WebSocket.",
-    changes: [
-      { type: "new", text: "Mode multijoueur jusqu'à 8 joueurs via Socket.io" },
-      {
-        type: "new",
-        text: "Salles de jeu avec code à 6 caractères partageables",
-      },
-      {
-        type: "new",
-        text: "Scoreboard en direct avec avatars des adversaires sur les options",
-      },
-      {
-        type: "new",
-        text: "Timer synchronisé côté serveur pour une équité parfaite",
-      },
-      {
-        type: "improved",
-        text: "Animations de transition entre les phases de jeu",
-      },
-      {
-        type: "improved",
-        text: "Affichage du rang mondial avec indicateur de progression",
-      },
-    ],
-  },
-  {
-    version: "2.3.0",
-    date: "2 mars 2026",
-    title: "Page profil enrichie",
-    current: false,
-    summary:
-      "Nouveau profil avec heatmap d'activité et système de réalisations.",
-    changes: [
-      {
-        type: "new",
-        text: "Heatmap d'activité sur 52 semaines (style contribution GitHub)",
-      },
-      {
-        type: "new",
-        text: "12 réalisations (badges) débloquables avec progression",
-      },
-      { type: "new", text: "Compteurs animés sur les statistiques du profil" },
-      { type: "new", text: "Graphe de répartition des catégories favorites" },
-      {
-        type: "improved",
-        text: "Anneau de score rotatif avec halo animé sur l'avatar",
-      },
-      {
-        type: "improved",
-        text: "Historique des derniers quiz avec barre de précision colorée",
-      },
-      {
-        type: "fixed",
-        text: "Correction de l'affichage de la date de dernière connexion",
-      },
-    ],
-  },
-  {
-    version: "2.2.0",
-    date: "18 janvier 2026",
-    title: "Administration & Firebase",
-    current: false,
-    summary: "Tableau de bord admin complet avec CRUD Firestore.",
-    changes: [
-      {
-        type: "new",
-        text: "Dashboard admin : vue d'ensemble, questions, utilisateurs",
-      },
-      {
-        type: "new",
-        text: "CRUD complet sur les questions et utilisateurs via Firestore",
-      },
-      { type: "new", text: "Toast notifications pour les actions admin" },
-      {
-        type: "new",
-        text: "Skeleton shimmer sur tous les états de chargement",
-      },
-      {
-        type: "improved",
-        text: "Filtres par catégorie et difficulté dans la liste des questions",
-      },
-      {
-        type: "improved",
-        text: "Modal de confirmation pour les suppressions irréversibles",
-      },
-      {
-        type: "fixed",
-        text: "Règles de sécurité Firestore corrigées pour les rôles admin",
-      },
-    ],
-  },
-  {
-    version: "2.1.0",
-    date: "5 décembre 2025",
-    title: "Paramètres de quiz avancés",
-    current: false,
-    summary: "Page de configuration avec 10 options personnalisables.",
-    changes: [
-      {
-        type: "new",
-        text: "Sélection multi-catégories avec chips interactives",
-      },
-      {
-        type: "new",
-        text: "Stepper + slider pour nombre de questions (5–50) et durée (10–120s)",
-      },
-      {
-        type: "new",
-        text: "Options avancées : pénalité, bonus rapidité, effets sonores, passage",
-      },
-      {
-        type: "new",
-        text: "Résumé temps réel de la configuration dans la colonne droite",
-      },
-      {
-        type: "improved",
-        text: "Spotlight border cards réactives au curseur sur toute la page",
-      },
-      {
-        type: "improved",
-        text: "Responsive mobile-first : résumé affiché avant les formulaires",
-      },
-    ],
-  },
-  {
-    version: "2.0.0",
-    date: "10 octobre 2025",
-    title: "Refonte complète — Scriptura v2",
-    current: false,
-    summary:
-      "Nouveau design system avec le taste-skill : Outfit, JetBrains Mono, palette emerald.",
-    changes: [
-      {
-        type: "new",
-        text: "Nouveau design system : Outfit + JetBrains Mono, accent emerald #10b981",
-      },
-      {
-        type: "new",
-        text: "Landing page avec mockup téléphone animé et heatmap de classement",
-      },
-      {
-        type: "new",
-        text: "Composant Quiz refait avec timer SVG, ripple, et états complets",
-      },
-      {
-        type: "new",
-        text: "Kinetic marquee infini sur la section statistiques",
-      },
-      {
-        type: "improved",
-        text: "Scroll-reveal via IntersectionObserver avec cleanup strict",
-      },
-      {
-        type: "improved",
-        text: "Anti-emoji : tous les icônes remplacés par des SVG inline",
-      },
-      {
-        type: "removed",
-        text: "Suppression de la dépendance lucide-react (remplacée par SVG inline)",
-      },
-      {
-        type: "removed",
-        text: "Suppression du thème violet — remplacé par la palette indigo/emerald",
-      },
-    ],
-  },
-  {
-    version: "1.3.0",
-    date: "22 juillet 2025",
-    title: "Classement & Réalisations",
-    current: false,
-    summary: "Système de classement mondial et premiers badges.",
-    changes: [
-      {
-        type: "new",
-        text: "Classement mondial filtrable par catégorie et période",
-      },
-      { type: "new", text: "6 premières réalisations débloquables" },
-      { type: "new", text: "Indicateur de rang avec delta de progression" },
-      {
-        type: "improved",
-        text: "Score avec bonus de rapidité proportionnel au temps restant",
-      },
-      {
-        type: "fixed",
-        text: "Correction du calcul de score en cas de timeout",
-      },
-    ],
-  },
-  {
-    version: "1.2.0",
-    date: "3 mai 2025",
-    title: "Authentification Firebase",
-    current: false,
-    summary: "Connexion Google et gestion de compte complète.",
-    changes: [
-      { type: "new", text: "Connexion via Google (Firebase Auth)" },
-      {
-        type: "new",
-        text: "Page profil avec avatar, statistiques et historique",
-      },
-      { type: "new", text: "Persistance des scores dans Firestore" },
-      {
-        type: "improved",
-        text: "Hook useDocument réutilisable pour les données Firebase",
-      },
-      {
-        type: "fixed",
-        text: "Correction des fuites mémoire dans les useEffect Firebase",
-      },
-    ],
-  },
-  {
-    version: "1.0.0",
-    date: "14 janvier 2025",
-    title: "Lancement initial",
-    current: false,
-    summary:
-      "Première version publique de Scriptura avec 5 catégories et 150 questions.",
-    changes: [
-      { type: "new", text: "Quiz solo avec 5 catégories bibliques" },
-      { type: "new", text: "Timer de 30 secondes par question" },
-      { type: "new", text: "Explication après chaque réponse" },
-      { type: "new", text: "3 niveaux de difficulté : Initié, Érudit, Lettré" },
-      {
-        type: "new",
-        text: "150 questions initiales vérifiées par des théologiens",
-      },
-    ],
-  },
-];
 
 /* ─── Change tag badge ─────────────────────────────────────────────────────*/
 function ChangeTag({ type }) {
@@ -983,8 +746,8 @@ export default function VersionsPage() {
     { id: "removed", label: "Supprimé", color: CHANGE_TYPES.removed.color },
   ];
 
-  const totalChanges = VERSIONS.reduce((s, v) => s + v.changes.length, 0);
-  const latestVersion = VERSIONS[0];
+  const totalChanges = versions.reduce((s, v) => s + v.changes.length, 0);
+  const latestVersion = versions[0];
 
   return (
     <div style={{ background: T.bg, minHeight: "100dvh", color: T.text }}>
@@ -1161,7 +924,7 @@ export default function VersionsPage() {
                       color: T.em,
                     }}
                   >
-                    {VERSIONS.length}
+                    {versions.length}
                   </div>
                   <div
                     style={{ fontFamily: T.sans, fontSize: 11, color: T.muted }}
@@ -1255,7 +1018,7 @@ export default function VersionsPage() {
 
           {/* Version entries */}
           <div style={{ display: "flex", flexDirection: "column", gap: 40 }}>
-            {VERSIONS.map((v, i) => (
+            {versions.map((v, i) => (
               <VersionCard
                 key={v.version}
                 v={v}
