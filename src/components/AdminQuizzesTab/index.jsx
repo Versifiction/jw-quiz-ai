@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   collection,
   addDoc,
@@ -10,7 +10,7 @@ import {
 } from "firebase/firestore";
 
 import DeleteModal from "../DeleteModal";
-import AdminQuestionModal from "../AdminQuestionModal";
+import AdminQuizModal from "../AdminQuizModal";
 import UserAvatar from "../ui/UserAvatar";
 import useCollection from "../../utils/hooks/useCollection";
 import T from "../ui/DesignTokens";
@@ -29,13 +29,13 @@ const CATEGORIES = [
   "Histoire biblique",
 ];
 
-export default function AdminQuestionsTab({ db, toast }) {
+export default function AdminQuizzesTab({ db, toast }) {
   const {
-    data: questions,
+    data: quizzes,
     loading,
     error,
     refetch,
-  } = useCollection(db, "questions", [orderBy("createdAt", "desc")]);
+  } = useCollection(db, "quizzes", [orderBy("createdAt", "desc")]);
   const [search, setSearch] = useState("");
   const [filterCat, setFilterCat] = useState("");
   const [filterDiff, setFilterDiff] = useState("");
@@ -44,7 +44,11 @@ export default function AdminQuestionsTab({ db, toast }) {
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
 
-  const filtered = questions.filter((q) => {
+  useEffect(() => {
+    console.log("modal : ", modal);
+  }, [modal]);
+
+  const filtered = quizzes.filter((q) => {
     const matchSearch =
       !search || q.entitled?.toLowerCase().includes(search.toLowerCase());
     const matchCat = !filterCat || q.category === filterCat;
@@ -53,22 +57,24 @@ export default function AdminQuestionsTab({ db, toast }) {
     return matchSearch && matchCat && matchDiff;
   });
 
+  console.log("filtered ", filtered);
+
   const handleSave = async (form) => {
     form.tags = form.tags.split(",");
     setSaving(true);
     try {
-      if (modal?.question?.id) {
-        await updateDoc(doc(db, "questions", modal.question.id), {
+      if (modal?.quiz?.id) {
+        await updateDoc(doc(db, "quizzes", modal.quiz.id), {
           ...form,
           updatedAt: serverTimestamp(),
         });
-        toast("Question mise à jour avec succès");
+        toast("Quiz mise à jour avec succès");
       } else {
-        await addDoc(collection(db, "questions"), {
+        await addDoc(collection(db, "quizzes"), {
           ...form,
           createdAt: serverTimestamp(),
         });
-        toast("Question créée avec succès");
+        toast("Quiz créée avec succès");
       }
       setModal(null);
       refetch();
@@ -82,8 +88,8 @@ export default function AdminQuestionsTab({ db, toast }) {
   const handleDelete = async () => {
     setDeleting(true);
     try {
-      await deleteDoc(doc(db, "questions", deleteTarget.id));
-      toast("Question supprimée");
+      await deleteDoc(doc(db, "quizzes", deleteTarget.id));
+      toast("Quiz supprimé");
       setDeleteTarget(null);
       refetch();
     } catch (e) {
@@ -196,7 +202,7 @@ export default function AdminQuestionsTab({ db, toast }) {
           onMouseDown={(e) => (e.currentTarget.style.transform = "scale(0.97)")}
           onMouseUp={(e) => (e.currentTarget.style.transform = "")}
         >
-          <Ic.Plus /> Nouvelle question
+          <Ic.Plus /> Nouveau quiz
         </button>
       </div>
 
@@ -209,7 +215,7 @@ export default function AdminQuestionsTab({ db, toast }) {
           marginBottom: 10,
         }}
       >
-        {filtered.length} question{filtered.length !== 1 ? "s" : ""}{" "}
+        {filtered.length} quiz{filtered.length !== 1 ? "s" : ""}{" "}
         {search || filterCat || filterDiff ? "(filtrées)" : ""}
       </div>
 
@@ -233,7 +239,7 @@ export default function AdminQuestionsTab({ db, toast }) {
             background: "rgba(255,255,255,0.02)",
           }}
         >
-          {["Id", "Question", "Niveau", "Auteur", "Actions"].map((h) => (
+          {["Id", "Quiz", "Type", "Auteur", "Actions"].map((h) => (
             <div
               key={h}
               style={{
@@ -243,8 +249,6 @@ export default function AdminQuestionsTab({ db, toast }) {
                 color: "rgba(255,255,255,0.35)",
                 letterSpacing: "0.08em",
                 textTransform: "uppercase",
-                display: "flex",
-                justifyContent: "center",
               }}
             >
               {h}
@@ -315,8 +319,8 @@ export default function AdminQuestionsTab({ db, toast }) {
               }}
             >
               {search || filterCat || filterDiff
-                ? "Aucune question ne correspond aux filtres"
-                : "Aucune question. Commencez par en créer une."}
+                ? "Aucun quiz ne correspond aux filtres"
+                : "Aucun quiz. Commencez par en créer un avec le bouton Nouveau quiz"}
             </div>
           </div>
         )}
@@ -325,7 +329,7 @@ export default function AdminQuestionsTab({ db, toast }) {
         {!loading &&
           filtered.map((q, i) => (
             <div
-              key={q.id}
+              key={q?.id}
               style={{
                 display: "grid",
                 gridTemplateColumns: "0.5fr 1.5fr 0.25fr 0.25fr 0.25fr",
@@ -353,8 +357,6 @@ export default function AdminQuestionsTab({ db, toast }) {
                     whiteSpace: "nowrap",
                     overflow: "hidden",
                     textOverflow: "ellipsis",
-                    display: "flex",
-                    justifyContent: "center",
                   }}
                 >
                   {q.id}
@@ -370,8 +372,6 @@ export default function AdminQuestionsTab({ db, toast }) {
                     overflow: "hidden",
                     textOverflow: "ellipsis",
                     marginBottom: 3,
-                    display: "flex",
-                    justifyContent: "center",
                   }}
                 >
                   {q.entitled}
@@ -385,7 +385,7 @@ export default function AdminQuestionsTab({ db, toast }) {
                   label={
                     difficulties.find(
                       (difficulty) => difficulty.name === q.difficulty,
-                    ).key
+                    )?.key
                   }
                   color={diffColor[q.difficulty] || T.em}
                 />
@@ -398,7 +398,7 @@ export default function AdminQuestionsTab({ db, toast }) {
                 className="flex justify-center items-center"
               >
                 <button
-                  onClick={() => setModal({ mode: "edit", question: q })}
+                  onClick={() => setModal({ mode: "edit", quiz: q })}
                   style={{
                     width: 30,
                     height: 30,
@@ -458,10 +458,14 @@ export default function AdminQuestionsTab({ db, toast }) {
 
       {/* Modals */}
       {modal && (
-        <AdminQuestionModal
-          question={modal.question}
+        <AdminQuizModal
+          quiz={modal.quiz}
           onSave={handleSave}
-          onClose={() => setModal(null)}
+          onClose={() => {
+            setModal(null);
+            console.log("close");
+          }}
+          isEdit={modal.mode === "edit"}
           saving={saving}
         />
       )}

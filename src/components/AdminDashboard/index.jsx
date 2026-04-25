@@ -2,12 +2,14 @@ import { useState, useCallback, useReducer } from "react";
 import { getFirestore } from "firebase/firestore";
 
 import AdminDashboardTab from "../AdminDashboardTab";
-import AdminQuestionsTab from "../AdminQuestionsTab";
 import AdminUsersTab from "../AdminUsersTab";
+import AdminQuestionsTab from "../AdminQuestionsTab";
+import AdminQuizzesTab from "../AdminQuizzesTab";
 import { Ic } from "../ui/Icons";
 import T from "../ui/DesignTokens";
 import useCollection from "../../utils/hooks/useCollection";
 import Sk from "../ui/Sk";
+import Logo from "../ui/Logo";
 
 /* Toast notification */
 function Toast({ toasts }) {
@@ -95,8 +97,9 @@ export default function AdminDashboard({ firebaseApp }) {
 
   const tabs = [
     { id: "dashboard", label: "Vue d'ensemble", icon: Ic.Dashboard },
-    { id: "questions", label: "Questions", icon: Ic.Questions },
     { id: "users", label: "Utilisateurs", icon: Ic.Users },
+    { id: "questions", label: "Questions", icon: Ic.Question },
+    { id: "quizzes", label: "Quiz", icon: Ic.Questions },
   ];
 
   const SideNav = () => (
@@ -118,59 +121,24 @@ export default function AdminDashboard({ firebaseApp }) {
         style={{
           display: "flex",
           alignItems: "center",
-          gap: 9,
-          marginBottom: 36,
-          paddingLeft: 4,
+          justifyContent: "center",
+          marginBottom: "4px",
         }}
       >
-        <div
-          style={{
-            width: 28,
-            height: 28,
-            borderRadius: 8,
-            background: `linear-gradient(135deg,${T.em},#059669)`,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            boxShadow: `0 4px 12px rgba(16,185,129,.3)`,
-          }}
-        >
-          <svg
-            width="14"
-            height="14"
-            viewBox="0 0 22 22"
-            fill="none"
-            stroke="#fff"
-            strokeWidth="1.8"
-            strokeLinecap="round"
-          >
-            <path d="M11 1 L13.5 8 L21 11 L13.5 14 L11 21 L8.5 14 L1 11 L8.5 8 Z" />
-          </svg>
-        </div>
-        <div>
-          <div
-            style={{
-              fontFamily: T.sans,
-              fontSize: 13,
-              fontWeight: 800,
-              color: T.text,
-              letterSpacing: "-0.02em",
-              lineHeight: 1,
-            }}
-          >
-            Scriptura
-          </div>
-          <div
-            style={{
-              fontFamily: T.mono,
-              fontSize: 9,
-              color: "rgba(255,255,255,0.28)",
-              letterSpacing: "0.1em",
-            }}
-          >
-            ADMIN
-          </div>
-        </div>
+        <Logo />
+      </div>
+      <div
+        style={{
+          fontFamily: T.sans,
+          fontSize: 13,
+          fontWeight: 800,
+          color: T.text,
+          letterSpacing: "-0.02em",
+          lineHeight: 1,
+          marginBottom: "20px",
+        }}
+      >
+        ADMIN
       </div>
 
       {/* Nav links */}
@@ -460,8 +428,9 @@ export default function AdminDashboard({ firebaseApp }) {
           {tab === "dashboard" && (
             <AdminDashboardTab questions={questions} users={users} />
           )}
-          {tab === "questions" && <AdminQuestionsTab db={db} toast={toast} />}
           {tab === "users" && <AdminUsersTab db={db} toast={toast} />}
+          {tab === "questions" && <AdminQuestionsTab db={db} toast={toast} />}
+          {tab === "quizzes" && <AdminQuizzesTab db={db} toast={toast} />}
         </main>
       </div>
 

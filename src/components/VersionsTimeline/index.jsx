@@ -1,21 +1,10 @@
 "use client";
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef } from "react";
 
 import versions from "../../utils/shapes/versions";
-
-/* ─── Design tokens ────────────────────────────────────────────────────────*/
-const T = {
-  bg: "#07050f",
-  surf: "#0f0a1e",
-  em: "#10b981",
-  emDim: "rgba(16,185,129,0.10)",
-  emBrd: "rgba(16,185,129,0.25)",
-  border: "rgba(255,255,255,0.08)",
-  text: "#f1f5f9",
-  muted: "rgba(241,245,249,0.45)",
-  mono: "'JetBrains Mono', monospace",
-  sans: "'Outfit', sans-serif",
-};
+import { Ic } from "../ui/Icons";
+import T from "../ui/DesignTokens";
+import Reveal from "../ui/Reveal";
 
 const CHANGE_TYPES = {
   new: {
@@ -42,142 +31,6 @@ const CHANGE_TYPES = {
     bg: "rgba(239,68,68,0.12)",
     border: "rgba(239,68,68,0.3)",
   },
-};
-
-/* ─── Icons ────────────────────────────────────────────────────────────────*/
-const Ic = {
-  Star: () => (
-    <svg width="12" height="12" viewBox="0 0 256 256" fill="currentColor">
-      <path d="m234.5 114.38-45.1 39.36 13.51 58.6a16 16 0 0 1-23.84 17.34l-51.11-31-51 31a16 16 0 0 1-23.84-17.34l13.49-58.54-45.11-39.42a16 16 0 0 1 9.12-28.06l59.46-5.15 23.21-55.36a15.95 15.95 0 0 1 29.44 0L166 81.17l59.44 5.15a16 16 0 0 1 9.11 28.06Z" />
-    </svg>
-  ),
-  Plus: () => (
-    <svg
-      width="11"
-      height="11"
-      viewBox="0 0 256 256"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="22"
-      strokeLinecap="round"
-    >
-      <path d="M128 40v176M40 128h176" />
-    </svg>
-  ),
-  ArrowUp: () => (
-    <svg
-      width="11"
-      height="11"
-      viewBox="0 0 256 256"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="22"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="m48 208 80-160 80 160" />
-    </svg>
-  ),
-  Wrench: () => (
-    <svg
-      width="11"
-      height="11"
-      viewBox="0 0 256 256"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="16"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="m226.76 69-92 92a48 48 0 1 1-39.75-39.75l92-92A48 48 0 0 1 226.76 69Z" />
-    </svg>
-  ),
-  Trash: () => (
-    <svg
-      width="11"
-      height="11"
-      viewBox="0 0 256 256"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="16"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M216 56H40M168 56V40a16 16 0 0 0-16-16h-48a16 16 0 0 0-16 16v16M200 56l-16 144a16 16 0 0 1-16 16H88a16 16 0 0 1-16-16L56 56" />
-    </svg>
-  ),
-  Filter: () => (
-    <svg
-      width="13"
-      height="13"
-      viewBox="0 0 256 256"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="16"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M48 68h160M84 128h88M112 188h32" />
-    </svg>
-  ),
-  Copy: () => (
-    <svg
-      width="12"
-      height="12"
-      viewBox="0 0 256 256"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="16"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <rect x="40" y="40" width="144" height="144" rx="8" />
-      <path d="M216 216H104a8 8 0 0 1-8-8V72" />
-    </svg>
-  ),
-  Check: () => (
-    <svg
-      width="11"
-      height="11"
-      viewBox="0 0 256 256"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="24"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="m40 128 72 72L216 56" />
-    </svg>
-  ),
-  Clock: () => (
-    <svg
-      width="12"
-      height="12"
-      viewBox="0 0 256 256"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="16"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <circle cx="128" cy="128" r="104" />
-      <path d="M128 72v56l40 40" />
-    </svg>
-  ),
-  Bell: () => (
-    <svg
-      width="12"
-      height="12"
-      viewBox="0 0 256 256"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="16"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M96 200a32 32 0 0 0 64 0M208 176H48a16 16 0 0 1-12.15-26.46C48.17 133.8 56 112 56 80a72 72 0 0 1 144 0c0 32 7.82 53.8 20.15 69.54A16 16 0 0 1 208 176Z" />
-    </svg>
-  ),
 };
 
 /* ─── Change tag badge ─────────────────────────────────────────────────────*/
@@ -208,39 +61,6 @@ function ChangeTag({ type }) {
     >
       {icons[type]} {cfg.label.toUpperCase()}
     </span>
-  );
-}
-
-/* ─── Scroll reveal ────────────────────────────────────────────────────────*/
-function Reveal({ children, delay = 0, threshold = 0.1 }) {
-  const ref = useRef(null);
-  const [vis, setVis] = useState(false);
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const obs = new IntersectionObserver(
-      ([e]) => {
-        if (e.isIntersecting) {
-          setVis(true);
-          obs.disconnect();
-        }
-      },
-      { threshold },
-    );
-    obs.observe(el);
-    return () => obs.disconnect();
-  }, [threshold]);
-  return (
-    <div
-      ref={ref}
-      style={{
-        opacity: vis ? 1 : 0,
-        transform: vis ? "none" : "translateY(24px)",
-        transition: `opacity 0.55s cubic-bezier(0.16,1,0.3,1) ${delay}s, transform 0.55s cubic-bezier(0.16,1,0.3,1) ${delay}s`,
-      }}
-    >
-      {children}
-    </div>
   );
 }
 

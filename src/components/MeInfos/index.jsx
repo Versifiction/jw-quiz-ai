@@ -1,16 +1,21 @@
 "use client";
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { getFirestore, where } from "firebase/firestore";
 import { format, formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
-import { useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import { auth } from "../../config/firebase";
 import T from "../ui/DesignTokens";
 import { Ic } from "../ui/Icons";
 import UserAvatar from "../../components/ui/UserAvatar";
 import useCollection from "../../utils/hooks/useCollection";
+import SpotCard from "../ui/SpotCard";
+import ActivityHeatmap from "../ui/ActivityHeatmap";
+import Reveal from "../ui/Reveal";
+import AchievementBadge from "../ui/AchievementBadge";
+import ProfileSkeleton from "../ui/ProfileSkeleton";
 
 /* ─── Mock user data (replace with Firebase) ───────────────────────────────*/
 const MOCK_USER = {
@@ -249,216 +254,6 @@ function Sk({ w = "100%", h = 14, r = 8 }) {
   );
 }
 
-/* ─── Scroll reveal ────────────────────────────────────────────────────────*/
-function Reveal({ children, delay = 0 }) {
-  const ref = useRef(null);
-  const [vis, setVis] = useState(false);
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const obs = new IntersectionObserver(
-      ([e]) => {
-        if (e.isIntersecting) {
-          setVis(true);
-          obs.disconnect();
-        }
-      },
-      { threshold: 0.1 },
-    );
-    obs.observe(el);
-    return () => obs.disconnect();
-  }, []);
-  return (
-    <div
-      ref={ref}
-      style={{
-        opacity: vis ? 1 : 0,
-        transform: vis ? "none" : "translateY(22px)",
-        transition: `opacity 0.55s cubic-bezier(0.16,1,0.3,1) ${delay}s, transform 0.55s cubic-bezier(0.16,1,0.3,1) ${delay}s`,
-      }}
-    >
-      {children}
-    </div>
-  );
-}
-
-/* ─── Spotlight card ───────────────────────────────────────────────────────*/
-function SpotCard({ children, style = {} }) {
-  const ref = useRef(null);
-  const onMove = useCallback((e) => {
-    const el = ref.current;
-    if (!el) return;
-    const r = el.getBoundingClientRect();
-    el.style.setProperty("--mx", `${e.clientX - r.left}px`);
-    el.style.setProperty("--my", `${e.clientY - r.top}px`);
-  }, []);
-  return (
-    <div
-      ref={ref}
-      onMouseMove={onMove}
-      style={{
-        position: "relative",
-        overflow: "hidden",
-        background: T.surf,
-        border: `1px solid ${T.border}`,
-        borderRadius: 20,
-        ...style,
-      }}
-    >
-      <div
-        style={{
-          position: "absolute",
-          inset: 0,
-          pointerEvents: "none",
-          zIndex: 0,
-          background:
-            "radial-gradient(180px at var(--mx,50%) var(--my,50%), rgba(16,185,129,0.06), transparent 80%)",
-        }}
-      />
-      <div style={{ position: "relative", zIndex: 1 }}>{children}</div>
-    </div>
-  );
-}
-
-/* ─── Activity heatmap ─────────────────────────────────────────────────────*/
-function ActivityHeatmap({ weeks }) {
-  const maxVal = 4;
-  const em = T.em;
-  const months = [
-    "Jan",
-    "Fév",
-    "Mar",
-    "Avr",
-    "Mai",
-    "Jun",
-    "Jul",
-    "Aoû",
-    "Sep",
-    "Oct",
-    "Nov",
-    "Déc",
-  ];
-  const now = new Date();
-  const startMonth = new Date(now);
-  startMonth.setDate(startMonth.getDate() - 52 * 7);
-  const monthLabels = [];
-  for (let m = 0; m < 12; m++) {
-    const d = new Date(startMonth);
-    d.setMonth(startMonth.getMonth() + m);
-    monthLabels.push({
-      label: months[d.getMonth()],
-      col: Math.floor(m * (52 / 12)),
-    });
-  }
-  return (
-    <div style={{ overflowX: "auto" }}>
-      <div style={{ minWidth: 600 }}>
-        {/* Month labels */}
-        <div
-          style={{ display: "flex", gap: 3, marginBottom: 6, paddingLeft: 0 }}
-        >
-          {weeks.map((_, wi) => {
-            const ml = monthLabels.find((m) => m.col === wi);
-            return (
-              <div
-                key={wi}
-                style={{
-                  width: 11,
-                  flexShrink: 0,
-                  fontFamily: T.mono,
-                  fontSize: 9,
-                  color: ml ? "rgba(255,255,255,0.28)" : "transparent",
-                  whiteSpace: "nowrap",
-                }}
-              >
-                {ml?.label || ""}
-              </div>
-            );
-          })}
-        </div>
-        {/* Grid */}
-        <div style={{ display: "flex", gap: 3 }}>
-          {weeks.map((week, wi) => (
-            <div
-              key={wi}
-              style={{ display: "flex", flexDirection: "column", gap: 3 }}
-            >
-              {week.map((val, di) => {
-                const intensity = val === 0 ? 0 : Math.min(val / maxVal, 1);
-                const bg =
-                  val === 0
-                    ? "rgba(255,255,255,0.05)"
-                    : `rgba(16,185,129,${0.15 + intensity * 0.75})`;
-                return (
-                  <div
-                    key={di}
-                    title={val ? `${val} quiz` : "Aucun"}
-                    style={{
-                      width: 11,
-                      height: 11,
-                      borderRadius: 3,
-                      background: bg,
-                      transition: "transform 0.15s",
-                      cursor: val ? "pointer" : "default",
-                    }}
-                    onMouseEnter={(e) => {
-                      if (val) e.currentTarget.style.transform = "scale(1.4)";
-                    }}
-                    onMouseLeave={(e) =>
-                      (e.currentTarget.style.transform = "scale(1)")
-                    }
-                  />
-                );
-              })}
-            </div>
-          ))}
-        </div>
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 6,
-            marginTop: 8,
-          }}
-        >
-          <span
-            style={{
-              fontFamily: T.mono,
-              fontSize: 9,
-              color: "rgba(255,255,255,0.25)",
-            }}
-          >
-            Moins
-          </span>
-          {[0, 0.25, 0.5, 0.75, 1].map((v, i) => (
-            <div
-              key={i}
-              style={{
-                width: 10,
-                height: 10,
-                borderRadius: 3,
-                background:
-                  v === 0
-                    ? "rgba(255,255,255,0.05)"
-                    : `rgba(16,185,129,${0.15 + v * 0.75})`,
-              }}
-            />
-          ))}
-          <span
-            style={{
-              fontFamily: T.mono,
-              fontSize: 9,
-              color: "rgba(255,255,255,0.25)",
-            }}
-          >
-            Plus
-          </span>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 /* ─── Radial score ring ────────────────────────────────────────────────────*/
 function ScoreRing({ pct, size = 80, color = T.em, label }) {
   const r = (size - 8) / 2;
@@ -529,180 +324,11 @@ function ScoreRing({ pct, size = 80, color = T.em, label }) {
   );
 }
 
-/* ─── Achievement badge ────────────────────────────────────────────────────*/
-function AchievementBadge({ a, index }) {
-  const [hov, setHov] = useState(false);
-  return (
-    <div
-      onMouseEnter={() => setHov(true)}
-      onMouseLeave={() => setHov(false)}
-      style={{
-        position: "relative",
-        padding: "18px 16px",
-        borderRadius: 16,
-        background: a.unlocked
-          ? hov
-            ? `${a.color}15`
-            : T.emDim
-          : "rgba(255,255,255,0.02)",
-        border: `1px solid ${a.unlocked ? (hov ? `${a.color}50` : `${a.color}25`) : T.border}`,
-        transition: "all 0.25s cubic-bezier(0.16,1,0.3,1)",
-        transform: hov && a.unlocked ? "translateY(-3px)" : "none",
-        opacity: a.unlocked ? 1 : 0.45,
-        cursor: "default",
-        animation: `fadeUp 0.4s cubic-bezier(0.16,1,0.3,1) ${index * 0.05}s both`,
-      }}
-    >
-      {/* Icon circle */}
-      <div
-        style={{
-          width: 40,
-          height: 40,
-          borderRadius: 12,
-          background: a.unlocked ? `${a.color}20` : "rgba(255,255,255,0.04)",
-          border: `1px solid ${a.unlocked ? `${a.color}35` : T.border}`,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          color: a.unlocked ? a.color : "rgba(255,255,255,0.2)",
-          marginBottom: 12,
-        }}
-      >
-        {a.unlocked ? <a.icon /> : <Ic.Lock />}
-      </div>
-      <div
-        style={{
-          fontFamily: T.sans,
-          fontSize: 12,
-          fontWeight: 700,
-          color: a.unlocked ? T.text : "rgba(255,255,255,0.35)",
-          marginBottom: 4,
-          letterSpacing: "-0.01em",
-        }}
-      >
-        {a.title}
-      </div>
-      <div
-        style={{
-          fontFamily: T.sans,
-          fontSize: 11,
-          color: T.muted,
-          lineHeight: 1.45,
-        }}
-      >
-        {a.desc}
-      </div>
-      {a.unlocked && (
-        <div
-          style={{
-            position: "absolute",
-            top: 12,
-            right: 12,
-            width: 18,
-            height: 18,
-            borderRadius: "50%",
-            background: `${a.color}20`,
-            border: `1px solid ${a.color}40`,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            color: a.color,
-          }}
-        >
-          <Ic.Check />
-        </div>
-      )}
-    </div>
-  );
-}
-
-/* ─── Loading skeleton ─────────────────────────────────────────────────────*/
-function ProfileSkeleton() {
-  return (
-    <div
-      style={{
-        maxWidth: 1200,
-        margin: "0 auto",
-        padding: "80px 0",
-        display: "flex",
-        flexDirection: "column",
-        gap: 24,
-      }}
-    >
-      <div
-        style={{ display: "grid", gridTemplateColumns: "300px 1fr", gap: 20 }}
-      >
-        <div
-          style={{
-            background: T.surf,
-            border: `1px solid ${T.border}`,
-            borderRadius: 20,
-            padding: 28,
-            display: "flex",
-            flexDirection: "column",
-            gap: 16,
-            alignItems: "center",
-          }}
-        >
-          <Sk w={96} h={96} r={99} />
-          <Sk w="70%" h={18} r={8} />
-          <Sk w="55%" h={12} r={6} />
-          <Sk w="100%" h={40} r={10} />
-        </div>
-        <div
-          style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}
-        >
-          {[0, 1, 2, 3].map((i) => (
-            <div
-              key={i}
-              style={{
-                background: T.surf,
-                border: `1px solid ${T.border}`,
-                borderRadius: 20,
-                padding: 24,
-              }}
-            >
-              <Sk h={28} w="55%" style={{ marginBottom: 8 }} />
-              <Sk h={12} w="70%" />
-            </div>
-          ))}
-        </div>
-      </div>
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
-        <div
-          style={{
-            background: T.surf,
-            border: `1px solid ${T.border}`,
-            borderRadius: 20,
-            padding: 24,
-            height: 200,
-          }}
-        >
-          <Sk h={12} w="40%" style={{ marginBottom: 16 }} />
-          {[0, 1, 2, 3].map((i) => (
-            <Sk key={i} h={8} r={4} style={{ marginBottom: 12 }} />
-          ))}
-        </div>
-        <div
-          style={{
-            background: T.surf,
-            border: `1px solid ${T.border}`,
-            borderRadius: 20,
-            padding: 24,
-            height: 200,
-          }}
-        >
-          <Sk h={12} w="40%" />
-        </div>
-      </div>
-    </div>
-  );
-}
-
 /* ══════════════════════════════════════════════════════════════════════════
    MAIN COMPONENT
 ══════════════════════════════════════════════════════════════════════════ */
 export default function ProfileInfos({ firebaseApp }) {
+  let navigate = useNavigate();
   const [userS] = useAuthState(auth);
   const [user, setUser] = useState();
   const db = firebaseApp ? getFirestore(firebaseApp) : null;
@@ -712,6 +338,11 @@ export default function ProfileInfos({ firebaseApp }) {
   console.log("userFromDatabase : ", userFromDatabase);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("history"); // "history" | "achievements"
+
+  const signOut = () => {
+    auth.signOut();
+    navigate("/");
+  };
 
   useEffect(() => {
     // Simulate Firebase fetch
@@ -727,6 +358,10 @@ export default function ProfileInfos({ firebaseApp }) {
     ? fmt.pct(user.quizzesSucceeded, user.quizzesCompleted)
     : 0;
   const unlockedCount = ACHIEVEMENTS.filter((a) => a.unlocked).length;
+
+  useEffect(() => {
+    if (!userS) navigate("/");
+  }, []);
 
   return (
     <div style={{ background: T.bg, minHeight: "100dvh", color: T.text }}>
@@ -940,8 +575,31 @@ export default function ProfileInfos({ firebaseApp }) {
                     letterSpacing: "0.06em",
                   }}
                 >
-                  {userFromDatabase[0]?.id}
+                  ID : {userFromDatabase[0]?.id}
                 </span>
+              </div>
+              <div
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 6,
+                  padding: "9px 20px",
+                  borderRadius: 99,
+                  background: "#ef4444",
+                  fontFamily: "'Outfit',sans-serif",
+                  fontSize: 13,
+                  fontWeight: 600,
+                  color: "#fff",
+                  textDecoration: "none",
+                  boxShadow: `0 4px 20px rgba(239,68,68,.3)`,
+                  transition: "all 0.25s cubic-bezier(0.16,1,0.3,1)",
+                  transform: "scale(1)",
+                  marginTop: 14,
+                  cursor: "pointer",
+                }}
+                onClick={signOut}
+              >
+                Se déconnecter
               </div>
             </SpotCard>
 
@@ -1227,7 +885,7 @@ export default function ProfileInfos({ firebaseApp }) {
           </div>
 
           {/* ── SECTION 2: ACTIVITY + CATEGORIES ─────────────────────────────*/}
-          <Reveal delay={0.1}>
+          {/* <Reveal delay={0.1}>
             <div
               style={{
                 display: "grid",
@@ -1239,7 +897,6 @@ export default function ProfileInfos({ firebaseApp }) {
             >
               <style>{`@media(max-width:767px){.mid-grid{grid-template-columns:1fr!important}}`}</style>
 
-              {/* Activity heatmap */}
               <SpotCard style={{ padding: "24px 24px" }}>
                 <div
                   style={{
@@ -1294,7 +951,7 @@ export default function ProfileInfos({ firebaseApp }) {
               </SpotCard>
 
               {/* Favorite categories */}
-              <SpotCard style={{ padding: "24px 22px" }}>
+          {/* <SpotCard style={{ padding: "24px 22px" }}>
                 <div
                   style={{
                     fontFamily: T.sans,
@@ -1396,12 +1053,12 @@ export default function ProfileInfos({ firebaseApp }) {
                 </div>
               </SpotCard>
             </div>
-          </Reveal>
+          </Reveal> */}
 
           {/* ── SECTION 3: TABS — HISTORY / ACHIEVEMENTS ─────────────────────*/}
           <Reveal delay={0.18}>
             {/* Tab bar */}
-            <div
+            {/* <div
               style={{
                 display: "flex",
                 gap: 4,
@@ -1447,12 +1104,11 @@ export default function ProfileInfos({ firebaseApp }) {
                   </button>
                 );
               })}
-            </div>
+            </div> */}
 
             {/* History tab */}
-            {activeTab === "history" && (
+            {/* {activeTab === "history" && (
               <SpotCard style={{ overflow: "hidden" }}>
-                {/* Table header */}
                 <div
                   style={{
                     display: "grid",
@@ -1479,8 +1135,8 @@ export default function ProfileInfos({ firebaseApp }) {
                       </div>
                     ),
                   )}
-                </div>
-                {user.recentQuizzes.map((q, i) => {
+                </div> */}
+            {/* {user.recentQuizzes.map((q, i) => {
                   const pct = fmt.pct(q.score, q.maxScore);
                   return (
                     <div
@@ -1661,10 +1317,10 @@ export default function ProfileInfos({ firebaseApp }) {
                   </button>
                 </div>
               </SpotCard>
-            )}
+            )} */}
 
             {/* Achievements tab */}
-            {activeTab === "achievements" && (
+            {/* {activeTab === "achievements" && (
               <div>
                 <div
                   style={{
@@ -1727,7 +1383,7 @@ export default function ProfileInfos({ firebaseApp }) {
                   ))}
                 </div>
               </div>
-            )}
+            )} */}
           </Reveal>
         </div>
       )}

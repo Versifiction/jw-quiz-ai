@@ -4,7 +4,7 @@ export default function KpiTile({ label, value, delta, color = T.em }) {
   return (
     <div
       style={{
-        padding: "20px 0",
+        padding: "20px",
         borderRight: "1px solid rgba(255,255,255,0.05)",
       }}
     >

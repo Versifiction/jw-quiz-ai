@@ -98,6 +98,7 @@ export default function UserAvatar({ userId, width, height }) {
         width={width || 30}
         height={height || 30}
         style={{ borderRadius: "50%", objectFit: "cover", display: "block" }}
+        referrerpolicy="no-referrer"
         // onError={(e) => {
         //   // Si l'image est cassée, on affiche les initiales
         //   e.currentTarget.style.display = "none";

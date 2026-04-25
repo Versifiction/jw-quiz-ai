@@ -1,4 +1,49 @@
 export const Ic = {
+  Hash: () => (
+    <svg
+      width="11"
+      height="11"
+      viewBox="0 0 256 256"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="16"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M40 100h176M40 156h176M100 40l-16 176M172 40l-16 176" />
+    </svg>
+  ),
+  Sort: () => (
+    <svg
+      width="13"
+      height="13"
+      viewBox="0 0 256 256"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="16"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M48 68h160M84 128h88M112 188h32" />
+    </svg>
+  ),
+  Scroll: () => (
+    <svg
+      width="13"
+      height="13"
+      viewBox="0 0 256 256"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="14"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M64 40h128a8 8 0 0 1 8 8v120a8 8 0 0 1-8 8H64" />
+      <path d="M64 40a32 32 0 0 0 0 64M64 40a32 32 0 0 1 0 64" />
+      <path d="M64 176a32 32 0 0 0 32 32h128" />
+      <path d="M104 104h88M104 136h64" />
+    </svg>
+  ),
   Trophy: () => (
     <svg
       width="16"
@@ -39,7 +84,16 @@ export const Ic = {
     </svg>
   ),
   User: () => (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="16"
+      height="16"
+      viewBox="0 0 448 512"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
       <path
         fill="rgb(255, 255, 255, 0.5)"
         d="M144 128a80 80 0 1 1 160 0 80 80 0 1 1 -160 0zm208 0a128 128 0 1 0 -256 0 128 128 0 1 0 256 0zM48 480c0-70.7 57.3-128 128-128l96 0c70.7 0 128 57.3 128 128l0 8c0 13.3 10.7 24 24 24s24-10.7 24-24l0-8c0-97.2-78.8-176-176-176l-96 0C78.8 304 0 382.8 0 480l0 8c0 13.3 10.7 24 24 24s24-10.7 24-24l0-8z"
@@ -157,6 +211,19 @@ export const Ic = {
     </svg>
   ),
   Questions: () => (
+    <svg
+      width="16"
+      height="16"
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 384 512"
+    >
+      <path
+        fill="currentColor"
+        d="M64 48l112 0 0 88c0 39.8 32.2 72 72 72l88 0 0 240c0 8.8-7.2 16-16 16L64 464c-8.8 0-16-7.2-16-16L48 64c0-8.8 7.2-16 16-16zM224 67.9l92.1 92.1-68.1 0c-13.3 0-24-10.7-24-24l0-68.1zM64 0C28.7 0 0 28.7 0 64L0 448c0 35.3 28.7 64 64 64l256 0c35.3 0 64-28.7 64-64l0-261.5c0-17-6.7-33.3-18.7-45.3L242.7 18.7C230.7 6.7 214.5 0 197.5 0L64 0zm56 256c-13.3 0-24 10.7-24 24s10.7 24 24 24l144 0c13.3 0 24-10.7 24-24s-10.7-24-24-24l-144 0zm0 96c-13.3 0-24 10.7-24 24s10.7 24 24 24l144 0c13.3 0 24-10.7 24-24s-10.7-24-24-24l-144 0z"
+      />
+    </svg>
+  ),
+  Question: () => (
     <svg
       width="16"
       height="16"
@@ -485,6 +552,94 @@ export const Ic = {
       <path d="m96 32 32 80 32-80" />
       <circle cx="128" cy="172" r="60" />
       <path d="M92 156h72M92 188h72" />
+    </svg>
+  ),
+  Mail: () => (
+    <svg
+      width="14"
+      height="14"
+      viewBox="0 0 256 256"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="14"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <rect x="16" y="64" width="224" height="168" rx="8" />
+      <path d="m16 64 112 88 112-88" />
+    </svg>
+  ),
+  Gear: () => (
+    <svg
+      width="14"
+      height="14"
+      viewBox="0 0 256 256"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="14"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <circle cx="128" cy="128" r="40" />
+      <path d="M130.05 28a104 104 0 0 1 21.65 3.9l9.08 15.72a83.56 83.56 0 0 1 13.65 8l17.72-2.75a104 104 0 0 1 14.17 14.14l-2.75 17.72A83.56 83.56 0 0 1 211.4 99l15.72 9.08a104.13 104.13 0 0 1 .88 21.9l-15.72 9.08a83.56 83.56 0 0 1-7.98 13.65l2.75 17.72a104 104 0 0 1-14.14 14.17l-17.72-2.75a83.56 83.56 0 0 1-13.65 8L152 206.1A104 104 0 0 1 130.05 210a104.13 104.13 0 0 1-21.65-3.9l-9.08-15.72a83.56 83.56 0 0 1-13.65-8l-17.72 2.75A104 104 0 0 1 53.78 171l2.75-17.72A83.56 83.56 0 0 1 48.6 139l-15.72-9.08a104.13 104.13 0 0 1-.88-21.9L47.72 99a83.56 83.56 0 0 1 7.98-13.65L52.95 67.6A104 104 0 0 1 67.09 53.43l17.72 2.75a83.56 83.56 0 0 1 13.65-8L107.54 32A104 104 0 0 1 130.05 28Z" />
+    </svg>
+  ),
+  Wrench: () => (
+    <svg
+      width="11"
+      height="11"
+      viewBox="0 0 256 256"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="16"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="m226.76 69-92 92a48 48 0 1 1-39.75-39.75l92-92A48 48 0 0 1 226.76 69Z" />
+    </svg>
+  ),
+  Copy: () => (
+    <svg
+      width="12"
+      height="12"
+      viewBox="0 0 256 256"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="16"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <rect x="40" y="40" width="144" height="144" rx="8" />
+      <path d="M216 216H104a8 8 0 0 1-8-8V72" />
+    </svg>
+  ),
+  Bell: () => (
+    <svg
+      width="12"
+      height="12"
+      viewBox="0 0 256 256"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="16"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M96 200a32 32 0 0 0 64 0M208 176H48a16 16 0 0 1-12.15-26.46C48.17 133.8 56 112 56 80a72 72 0 0 1 144 0c0 32 7.82 53.8 20.15 69.54A16 16 0 0 1 208 176Z" />
+    </svg>
+  ),
+  Home: () => (
+    <svg
+      width="15"
+      height="15"
+      viewBox="0 0 256 256"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="18"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M208 222H48a8 8 0 0 1-8-8v-96l88-80 88 80v96a8 8 0 0 1-8 8Z" />
+      <path d="M104 222v-88h48v88" />
     </svg>
   ),
 };

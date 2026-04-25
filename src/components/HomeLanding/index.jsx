@@ -1,47 +1,43 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef } from "react";
 import { getFirestore } from "firebase/firestore";
+import { auth } from "../../config/firebase";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { Link } from "react-router-dom";
 
 import HomePhoneMockup from "../HomePhoneMockup";
 import useCollection from "../../utils/hooks/useCollection";
 import { Ic } from "../ui/Icons";
 import Logo from "../ui/Logo";
+import SpotCard from "../ui/SpotCard";
 
 /* ─── Data ────────────────────────────────────────────────────────────────*/
 const CATEGORIES = [
   {
     id: 1,
-    title: "Torah & Pentateuque",
-    sub: "Genèse — Deutéronome",
-    count: 48,
+    title: "Difficulté",
+    slug: "difficulty",
+    sub: "Facile, moyen ou difficile",
+    count: 3,
     col: "span 1",
+    icon: Ic.Target,
   },
   {
     id: 2,
-    title: "Évangiles & Actes",
-    sub: "Nouveau Testament",
-    count: 62,
+    title: "Livres",
+    slug: "books",
+    sub: "De la Genèse à la Révélation",
+    count: 66,
     col: "span 1",
+    icon: Ic.Book,
   },
   {
     id: 3,
-    title: "Prophètes",
-    sub: "Majeurs & Mineurs",
-    count: 55,
-    col: "span 2",
-  },
-  {
-    id: 4,
-    title: "Psaumes & Sagesse",
-    sub: "Poésie hébraïque",
-    count: 40,
+    title: "Personnages",
+    slug: "characters",
+    sub: "D'Adam & Eve à Jean",
+    count: 16,
     col: "span 1",
-  },
-  {
-    id: 5,
-    title: "Épîtres & Révélation",
-    sub: "Paul & Jean",
-    count: 37,
-    col: "span 1",
+    icon: Ic.Users,
   },
 ];
 
@@ -95,61 +91,21 @@ const LEADERBOARD = [
 
 const TESTIMONIALS = [
   {
-    text: "Une approche rigoureuse et ludique. J'ai progressé plus en deux semaines qu'en un an de lecture passée.",
-    author: "Pasteur V. Leconte",
-    role: "Théologien, Strasbourg",
+    text: "Une façon amusante d'améliorer ses connaissances bibliques !",
+    author: "Alpha Mobe",
+    role: "Paris",
   },
   {
-    text: "Les explications après chaque réponse sont d'une précision rare. On sent l'expertise derrière chaque question.",
-    author: "Sœur Cécile Arnaud",
-    role: "Catéchiste, Nantes",
+    text: "Un site moderne, bien conçu, agréable à utiliser.",
+    author: "Armand Mobe",
+    role: "Yvelines",
   },
   {
-    text: "Le classement en temps réel m'a redonné envie d'étudier quotidiennement. La compétition saine, ça change tout.",
-    author: "Diacre J.-P. Mbuyi",
-    role: "Communauté évangélique, Kinshasa",
+    text: "Une manière ludique de renforcer sa foi et son savoir.",
+    author: "Jean-Marc Charpentier",
+    role: "Yvelines",
   },
 ];
-
-/* ─── Spotlight card ─────────────────────────────────────────────────────*/
-function SpotCard({ children, style = {}, onClick }) {
-  const ref = useRef(null);
-  const onMove = useCallback((e) => {
-    const el = ref.current;
-    if (!el) return;
-    const r = el.getBoundingClientRect();
-    el.style.setProperty("--mx", `${e.clientX - r.left}px`);
-    el.style.setProperty("--my", `${e.clientY - r.top}px`);
-  }, []);
-  return (
-    <div
-      ref={ref}
-      onMouseMove={onMove}
-      onClick={onClick}
-      style={{
-        position: "relative",
-        overflow: "hidden",
-        background: "rgba(255,255,255,0.03)",
-        border: "1px solid rgba(255,255,255,0.08)",
-        borderRadius: 20,
-        cursor: onClick ? "pointer" : "default",
-        ...style,
-      }}
-    >
-      <div
-        style={{
-          position: "absolute",
-          inset: 0,
-          pointerEvents: "none",
-          zIndex: 0,
-          background:
-            "radial-gradient(200px at var(--mx,50%) var(--my,50%), rgba(16,185,129,0.07), transparent 80%)",
-        }}
-      />
-      <div style={{ position: "relative", zIndex: 1 }}>{children}</div>
-    </div>
-  );
-}
 
 /* ─── Avatar ─────────────────────────────────────────────────────────────*/
 function Avatar({ initials, accent, size = 36 }) {
@@ -264,6 +220,7 @@ function Reveal({ children, delay = 0 }) {
    LANDING PAGE
 ════════════════════════════════════════════════════════════════════════ */
 export default function QuizLanding({ firebaseApp }) {
+  const [user] = useAuthState(auth);
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeCat, setActiveCat] = useState(null);
 
@@ -273,8 +230,6 @@ export default function QuizLanding({ firebaseApp }) {
   const em = "#10b981"; /* emerald accent — single accent rule */
   const emDim = "rgba(16,185,129,0.12)";
 
-  const navLinks = ["Catégories", "Classement", "À propos", "Rejoindre"];
-
   const db = firebaseApp ? getFirestore(firebaseApp) : null;
 
   const { data: totalQuestions } = useCollection(db, "questions");
@@ -282,8 +237,8 @@ export default function QuizLanding({ firebaseApp }) {
   const { data: totalQuizzes } = useCollection(db, "quizzes");
 
   const STATS = [
-    { val: totalUsers.length, label: "Utilisateurs" },
     { val: totalQuestions.length, label: "Questions" },
+    { val: totalUsers.length, label: "Utilisateurs" },
     { val: totalQuizzes.length, label: "Quiz" },
   ];
 
@@ -417,9 +372,9 @@ export default function QuizLanding({ firebaseApp }) {
                 animation: "fadeIn 0.55s 0.26s both",
               }}
             >
-              295 questions théocratiques vérifiées par des experts. Six
-              catégories, trois niveaux. Apprenez en jouant — chaque erreur
-              devient une leçon.
+              {totalQuestions.length} questions bibliques. 3 catégories, 3
+              niveaux de difficulté.
+              <br /> Apprenez en jouant — chaque erreur devient une leçon.
             </p>
 
             {/* CTA row */}
@@ -666,31 +621,33 @@ export default function QuizLanding({ firebaseApp }) {
       >
         <Reveal>
           <div style={{ marginBottom: 48 }}>
-            <div
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: 6,
-                padding: "4px 12px",
-                borderRadius: 99,
-                background: emDim,
-                border: `1px solid rgba(16,185,129,.2)`,
-                marginBottom: 16,
-              }}
-            >
-              <Ic.Book />
-              <span
+            <div style={{ display: "flex", justifyContent: "center" }}>
+              <div
                 style={{
-                  fontFamily: "'DM Sans',sans-serif",
-                  fontSize: 11,
-                  fontWeight: 600,
-                  letterSpacing: "0.1em",
-                  textTransform: "uppercase",
-                  color: em,
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 6,
+                  padding: "4px 12px",
+                  borderRadius: 99,
+                  background: emDim,
+                  border: `1px solid rgba(16,185,129,.2)`,
+                  marginBottom: 16,
                 }}
               >
-                Catégories
-              </span>
+                <Ic.Book />
+                <span
+                  style={{
+                    fontFamily: "'DM Sans',sans-serif",
+                    fontSize: 11,
+                    fontWeight: 600,
+                    letterSpacing: "0.1em",
+                    textTransform: "uppercase",
+                    color: em,
+                  }}
+                >
+                  Types
+                </span>
+              </div>
             </div>
             <h2
               style={{
@@ -700,11 +657,14 @@ export default function QuizLanding({ firebaseApp }) {
                 letterSpacing: "-0.03em",
                 color: "#fff",
                 lineHeight: 1.1,
+                textAlign: "center",
               }}
             >
-              Six domaines.
+              Trois types de quiz.
               <br />
-              <span style={{ color: "rgba(255,255,255,0.35)" }}>
+              <span
+                style={{ color: "rgba(255,255,255,0.35)", textAlign: "center" }}
+              >
                 Un seul objectif.
               </span>
             </h2>
@@ -715,7 +675,7 @@ export default function QuizLanding({ firebaseApp }) {
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "repeat(4, 1fr)",
+            gridTemplateColumns: "repeat(3, 1fr)",
             gridTemplateRows: "auto auto",
             gap: 12,
           }}
@@ -728,122 +688,124 @@ export default function QuizLanding({ firebaseApp }) {
 
           {CATEGORIES.map((cat, i) => (
             <Reveal key={cat.id} delay={i * 0.07}>
-              <SpotCard
-                onClick={() =>
-                  setActiveCat(activeCat === cat.id ? null : cat.id)
-                }
-                style={{
-                  gridColumn: cat.id === 3 ? "span 2" : "span 1",
-                  padding: "28px 24px",
-                  height: "100%",
-                  outline:
-                    activeCat === cat.id
-                      ? `1px solid rgba(16,185,129,.5)`
-                      : "none",
-                  background:
-                    activeCat === cat.id
-                      ? "rgba(16,185,129,0.06)"
-                      : "rgba(255,255,255,0.03)",
-                  transition: "all 0.3s cubic-bezier(0.16,1,0.3,1)",
-                  transform: "scale(1)",
-                }}
-                className={cat.id === 3 ? "bento-span2" : ""}
-              >
-                <div
+              <Link to={`/quiz/${cat.slug}`}>
+                <SpotCard
+                  onClick={() =>
+                    setActiveCat(activeCat === cat.id ? null : cat.id)
+                  }
                   style={{
-                    display: "flex",
-                    alignItems: "flex-start",
-                    justifyContent: "space-between",
-                    marginBottom: 20,
+                    gridColumn: cat.id === 3 ? "span 2" : "span 1",
+                    padding: "28px 24px",
+                    height: "100%",
+                    outline:
+                      activeCat === cat.id
+                        ? `1px solid rgba(16,185,129,.5)`
+                        : "none",
+                    background:
+                      activeCat === cat.id
+                        ? "rgba(16,185,129,0.06)"
+                        : "rgba(255,255,255,0.03)",
+                    transition: "all 0.3s cubic-bezier(0.16,1,0.3,1)",
+                    transform: "scale(1)",
                   }}
+                  className={cat.id === 3 ? "bento-span2" : ""}
                 >
                   <div
                     style={{
-                      width: 36,
-                      height: 36,
-                      borderRadius: 10,
-                      background: emDim,
-                      border: `1px solid rgba(16,185,129,.2)`,
                       display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      color: em,
+                      alignItems: "flex-start",
+                      justifyContent: "space-between",
+                      marginBottom: 20,
                     }}
                   >
-                    <Ic.Book />
-                  </div>
-                  <span
-                    style={{
-                      fontFamily: "'DM Sans',sans-serif",
-                      fontSize: 11,
-                      color: "rgba(255,255,255,0.3)",
-                      background: "rgba(255,255,255,0.05)",
-                      padding: "3px 10px",
-                      borderRadius: 99,
-                    }}
-                  >
-                    {cat.count} Q
-                  </span>
-                </div>
-                <h3
-                  style={{
-                    fontFamily: "'Outfit',sans-serif",
-                    fontSize: cat.id === 3 ? 18 : 15,
-                    fontWeight: 700,
-                    color: activeCat === cat.id ? em : "#fff",
-                    marginBottom: 5,
-                    letterSpacing: "-0.02em",
-                    transition: "color 0.2s",
-                  }}
-                >
-                  {cat.title}
-                </h3>
-                <p
-                  style={{
-                    fontFamily: "'DM Sans',sans-serif",
-                    fontSize: 12,
-                    color: "rgba(255,255,255,0.35)",
-                    lineHeight: 1.5,
-                  }}
-                >
-                  {cat.sub}
-                </p>
-                {activeCat === cat.id && (
-                  <div
-                    style={{
-                      marginTop: 16,
-                      padding: "10px 14px",
-                      borderRadius: 10,
-                      background: emDim,
-                      border: `1px solid rgba(16,185,129,.2)`,
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 8,
-                    }}
-                  >
-                    <span style={{ color: em }}>
-                      <Ic.Play />
-                    </span>
+                    <div
+                      style={{
+                        width: 36,
+                        height: 36,
+                        borderRadius: 10,
+                        background: emDim,
+                        border: `1px solid rgba(16,185,129,.2)`,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        color: em,
+                      }}
+                    >
+                      <cat.icon />
+                    </div>
                     <span
                       style={{
                         fontFamily: "'DM Sans',sans-serif",
-                        fontSize: 12,
-                        color: em,
-                        fontWeight: 500,
+                        fontSize: 11,
+                        color: "rgba(255,255,255,0.3)",
+                        background: "rgba(255,255,255,0.05)",
+                        padding: "3px 10px",
+                        borderRadius: 99,
                       }}
                     >
-                      Commencer cette catégorie
+                      {cat.count} Quiz
                     </span>
                   </div>
-                )}
-              </SpotCard>
+                  <h3
+                    style={{
+                      fontFamily: "'Outfit',sans-serif",
+                      fontSize: cat.id === 3 ? 18 : 15,
+                      fontWeight: 700,
+                      color: activeCat === cat.id ? em : "#fff",
+                      marginBottom: 5,
+                      letterSpacing: "-0.02em",
+                      transition: "color 0.2s",
+                    }}
+                  >
+                    {cat.title}
+                  </h3>
+                  <p
+                    style={{
+                      fontFamily: "'DM Sans',sans-serif",
+                      fontSize: 12,
+                      color: "rgba(255,255,255,0.35)",
+                      lineHeight: 1.5,
+                    }}
+                  >
+                    {cat.sub}
+                  </p>
+                  {activeCat === cat.id && (
+                    <div
+                      style={{
+                        marginTop: 16,
+                        padding: "10px 14px",
+                        borderRadius: 10,
+                        background: emDim,
+                        border: `1px solid rgba(16,185,129,.2)`,
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 8,
+                      }}
+                    >
+                      <span style={{ color: em }}>
+                        <Ic.Play />
+                      </span>
+                      <span
+                        style={{
+                          fontFamily: "'DM Sans',sans-serif",
+                          fontSize: 12,
+                          color: em,
+                          fontWeight: 500,
+                        }}
+                      >
+                        Commencer cette catégorie
+                      </span>
+                    </div>
+                  )}
+                </SpotCard>
+              </Link>
             </Reveal>
           ))}
         </div>
       </section>
 
       {/* ── LEADERBOARD ───────────────────────────────────────────────────── */}
-      <section
+      {/* <section
         style={{
           maxWidth: 1200,
           margin: "0 auto",
@@ -861,7 +823,6 @@ export default function QuizLanding({ firebaseApp }) {
         >
           <style>{`@media(max-width:767px){.lb-grid{grid-template-columns:1fr!important}}`}</style>
 
-          {/* Left: text */}
           <Reveal>
             <div style={{ paddingTop: 8 }}>
               <div
@@ -925,7 +886,7 @@ export default function QuizLanding({ firebaseApp }) {
               <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
                 {[
                   "Score total",
-                  "Temps moyen",
+                  "Temps medium",
                   "Catégorie",
                   "Hebdomadaire",
                 ].map((f) => (
@@ -948,10 +909,8 @@ export default function QuizLanding({ firebaseApp }) {
             </div>
           </Reveal>
 
-          {/* Right: leaderboard card */}
           <Reveal delay={0.15}>
             <SpotCard style={{ padding: "4px 0", overflow: "visible" }}>
-              {/* Top 3 podium */}
               <div
                 style={{
                   display: "grid",
@@ -1013,7 +972,6 @@ export default function QuizLanding({ firebaseApp }) {
                             {p.pts.toLocaleString()}
                           </span>
                         </div>
-                        {/* Podium bar */}
                         <div
                           style={{
                             width: "100%",
@@ -1048,7 +1006,6 @@ export default function QuizLanding({ firebaseApp }) {
                 )}
               </div>
 
-              {/* Divider */}
               <div
                 style={{
                   height: 1,
@@ -1056,8 +1013,6 @@ export default function QuizLanding({ firebaseApp }) {
                   marginBottom: 4,
                 }}
               />
-
-              {/* Ranks 4–5 */}
               {LEADERBOARD.slice(3).map((p) => (
                 <div
                   key={p.rank}
@@ -1152,7 +1107,7 @@ export default function QuizLanding({ firebaseApp }) {
             </SpotCard>
           </Reveal>
         </div>
-      </section>
+      </section> */}
 
       {/* ── FEATURES zig-zag ──────────────────────────────────────────────── */}
       <section
@@ -1163,32 +1118,36 @@ export default function QuizLanding({ firebaseApp }) {
         }}
       >
         <Reveal>
-          <div style={{ textAlign: "left", marginBottom: 60 }}>
-            <div
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: 6,
-                padding: "4px 12px",
-                borderRadius: 99,
-                background: "rgba(99,102,241,0.1)",
-                border: "1px solid rgba(99,102,241,0.25)",
-                marginBottom: 16,
-              }}
-            >
-              <Ic.Shield />
-              <span
+          <div style={{ marginBottom: 60 }}>
+            <div style={{ display: "flex", justifyContent: "center" }}>
+              <div
                 style={{
-                  fontFamily: "'DM Sans',sans-serif",
-                  fontSize: 11,
-                  fontWeight: 600,
-                  letterSpacing: "0.1em",
-                  textTransform: "uppercase",
-                  color: "#818cf8",
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 6,
+                  padding: "4px 12px",
+                  borderRadius: 99,
+                  background: "rgba(99,102,241,0.1)",
+                  border: "1px solid rgba(99,102,241,0.25)",
+                  marginBottom: 16,
+                  justifyContent: "center",
                 }}
               >
-                Conçu pour progresser
-              </span>
+                <Ic.Shield />
+                <span
+                  style={{
+                    fontFamily: "'DM Sans',sans-serif",
+                    fontSize: 11,
+                    fontWeight: 600,
+                    letterSpacing: "0.1em",
+                    textTransform: "uppercase",
+                    color: "#818cf8",
+                    textAlign: "center",
+                  }}
+                >
+                  Conçu pour progresser
+                </span>
+              </div>
             </div>
             <h2
               style={{
@@ -1198,11 +1157,14 @@ export default function QuizLanding({ firebaseApp }) {
                 letterSpacing: "-0.03em",
                 color: "#fff",
                 lineHeight: 1.1,
+                textAlign: "center",
               }}
             >
-              Pas seulement un quiz.
+              Pas seulement des quiz.
               <br />
-              <span style={{ color: "rgba(255,255,255,0.35)" }}>
+              <span
+                style={{ color: "rgba(255,255,255,0.35)", textAlign: "center" }}
+              >
                 Une méthode d'étude.
               </span>
             </h2>
@@ -1346,6 +1308,7 @@ export default function QuizLanding({ firebaseApp }) {
               color: "#fff",
               marginBottom: 36,
               lineHeight: 1.1,
+              textAlign: "center",
             }}
           >
             Ce qu'ils disent.
@@ -1409,7 +1372,13 @@ export default function QuizLanding({ firebaseApp }) {
                       .slice(0, 2)
                       .join("")}
                   </div>
-                  <div>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "flex-start",
+                    }}
+                  >
                     <div
                       style={{
                         fontFamily: "'Outfit',sans-serif",
@@ -1541,30 +1510,32 @@ export default function QuizLanding({ firebaseApp }) {
               >
                 <Ic.Play /> Jouer maintenant
               </a>
-              <a
-                href="#"
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  gap: 6,
-                  padding: "10px 16px",
-                  fontFamily: "'DM Sans',sans-serif",
-                  fontSize: 13,
-                  color: "rgba(255,255,255,0.4)",
-                  textDecoration: "none",
-                  borderRadius: 10,
-                  transition: "color 0.2s",
-                }}
-                onMouseEnter={(e) =>
-                  (e.target.style.color = "rgba(255,255,255,0.75)")
-                }
-                onMouseLeave={(e) =>
-                  (e.target.style.color = "rgba(255,255,255,0.4)")
-                }
-              >
-                Se connecter
-              </a>
+              {!user && (
+                <a
+                  href="#"
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: 6,
+                    padding: "10px 16px",
+                    fontFamily: "'DM Sans',sans-serif",
+                    fontSize: 13,
+                    color: "rgba(255,255,255,0.4)",
+                    textDecoration: "none",
+                    borderRadius: 10,
+                    transition: "color 0.2s",
+                  }}
+                  onMouseEnter={(e) =>
+                    (e.target.style.color = "rgba(255,255,255,0.75)")
+                  }
+                  onMouseLeave={(e) =>
+                    (e.target.style.color = "rgba(255,255,255,0.4)")
+                  }
+                >
+                  Se connecter
+                </a>
+              )}
             </div>
           </div>
         </section>

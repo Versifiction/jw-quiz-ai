@@ -23,7 +23,7 @@ export default function AdminDashboardTab({ questions, users }) {
   console.log("questions : ", questions);
   const totalUsers = users.length;
   const cats = [...new Set(questions.map((q) => q.category).filter(Boolean))];
-  const diffDist = { facile: 0, moyen: 0, difficile: 0 };
+  const diffDist = { easy: 0, medium: 0, hard: 0 };
   questions.forEach((q) => {
     if (q.difficulty in diffDist) diffDist[q.difficulty]++;
   });
@@ -175,7 +175,8 @@ export default function AdminDashboardTab({ questions, users }) {
             Répartition par difficulté
           </div>
           {difficulties.map((d) => {
-            const count = diffDist[d.key];
+            console.log("d : ", d);
+            const count = diffDist[d.name];
             const pct = totalQuestions
               ? Math.round((count / totalQuestions) * 100)
               : 0;
@@ -190,7 +191,7 @@ export default function AdminDashboardTab({ questions, users }) {
                   borderBottom: `1px solid ${T.border}`,
                 }}
               >
-                <Badge label={d.name} color={d.color} width={80} />
+                <Badge label={d.key} color={d.color} width={80} />
                 <div
                   style={{
                     flex: 1,

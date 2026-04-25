@@ -5,7 +5,7 @@ import Footer from "../../components/Footer";
 
 function Faq() {
   return (
-    <div className="w-full bg-gradient-to-r from-[#4A6DA7] to-[#a0b4d5]">
+    <div>
       <Nav />
       <VersionsTimeline />
       <Footer />

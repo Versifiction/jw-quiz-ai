@@ -29,7 +29,7 @@ export default function AdminQuestionModal({
           book: question.book || "genese",
           choices: question.choices,
           createdAt: question.createdAt,
-          difficulty: question.difficulty || "facile",
+          difficulty: question.difficulty || "easy",
           entitled: question.entitled,
           explanation: question.explanation,
           tags: question.tags || [],
@@ -73,9 +73,9 @@ export default function AdminQuestionModal({
         inset: 0,
         zIndex: 150,
         display: "flex",
-        alignItems: "center",
         justifyContent: "center",
         padding: 20,
+        height: "fit-content",
       }}
     >
       <div
@@ -93,7 +93,6 @@ export default function AdminQuestionModal({
           zIndex: 1,
           width: "100%",
           maxWidth: 580,
-          maxHeight: "90dvh",
           overflowY: "auto",
           background: T.surf,
           border: `1px solid ${T.border}`,
@@ -245,7 +244,7 @@ export default function AdminQuestionModal({
               >
                 {difficulties.map((d) => (
                   <option key={d.key} value={d.key}>
-                    {d.name}
+                    {d.key}
                   </option>
                 ))}
               </select>

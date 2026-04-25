@@ -6,16 +6,19 @@ import { Link } from "react-router-dom";
 
 import { auth, db } from "../../config/firebase";
 import UserAvatar from "../ui/UserAvatar";
+import T from "../ui/DesignTokens";
 import { Ic } from "../ui/Icons";
 import Logo from "../ui/Logo";
 import { navLinks } from "../../utils/shapes/navLinks";
 import { admins } from "../../utils/shapes/admins";
+import { useOnline } from "../../utils/hooks/useOnline";
 
 function Nav() {
   const [user] = useAuthState(auth);
   const em = "#10b981";
   const [navScrolled, setNavScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const isOnline = useOnline();
 
   useEffect(() => {
     const fn = () => setNavScrolled(window.scrollY > 32);
@@ -88,9 +91,26 @@ function Nav() {
           alignItems: "center",
           flexWrap: "wrap",
           gap: 16,
+          position: "relative",
         }}
       >
         <Logo width={30} height={30} fontSize={16} />
+        {user && (
+          <div
+            style={{
+              position: "absolute",
+              bottom: 4,
+              right: 4,
+              width: 14,
+              height: 14,
+              borderRadius: "50%",
+              background: T.em,
+              border: `2px solid ${T.bg}`,
+              animation: "pulse 2.5s ease-in-out infinite",
+            }}
+          />
+        )}
+
         {/* Mobile menu */}
         {menuOpen && (
           <div
