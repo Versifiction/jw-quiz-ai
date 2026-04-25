@@ -3,12 +3,14 @@ import { getFirestore } from "firebase/firestore";
 import { auth } from "../../config/firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { Link } from "react-router-dom";
+import { isWithinInterval, subYears } from "date-fns";
 
 import HomePhoneMockup from "../HomePhoneMockup";
 import useCollection from "../../utils/hooks/useCollection";
 import { Ic } from "../ui/Icons";
 import Logo from "../ui/Logo";
 import SpotCard from "../ui/SpotCard";
+import UserAvatar from "../ui/UserAvatar";
 
 /* ─── Data ────────────────────────────────────────────────────────────────*/
 const CATEGORIES = [
@@ -236,6 +238,13 @@ export default function QuizLanding({ firebaseApp }) {
   const { data: totalUsers } = useCollection(db, "users");
   const { data: totalQuizzes } = useCollection(db, "quizzes");
 
+  const usersCreatedThisYear = totalUsers.filter((user) =>
+    isWithinInterval(user.createdAt.seconds * 1000, {
+      start: subYears(new Date(), 1),
+      end: new Date(),
+    }),
+  );
+
   const STATS = [
     { val: totalQuestions.length, label: "Questions" },
     { val: totalUsers.length, label: "Utilisateurs" },
@@ -462,7 +471,7 @@ export default function QuizLanding({ firebaseApp }) {
                 animation: "fadeIn 0.55s 0.42s both",
               }}
             >
-              <div style={{ display: "flex" }}>
+              {/* <div style={{ display: "flex" }}>
                 {["#10b981", "#6366f1", "#f59e0b", "#ec4899", "#14b8a6"].map(
                   (c, i) => (
                     <div
@@ -492,6 +501,25 @@ export default function QuizLanding({ firebaseApp }) {
                     </div>
                   ),
                 )}
+              </div> */}
+              <div className="flex">
+                {usersCreatedThisYear.map((user, index) => (
+                  <div
+                    key={index}
+                    style={{
+                      width: 28,
+                      height: 28,
+                      borderRadius: "50%",
+                      border: `2px solid #059B6C`,
+                      marginLeft: index ? -8 : 0,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <UserAvatar userId={user.id} />
+                  </div>
+                ))}
               </div>
               <span
                 style={{
@@ -502,7 +530,7 @@ export default function QuizLanding({ firebaseApp }) {
               >
                 Rejoint par{" "}
                 <strong style={{ color: "rgba(255,255,255,0.75)" }}>
-                  12 400
+                  {usersCreatedThisYear.length}
                 </strong>{" "}
                 membres cette année
               </span>
