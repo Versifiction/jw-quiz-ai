@@ -1,12 +1,12 @@
 const emptyQuestion = {
   answer: null,
   author: "",
-  book: "genese",
+  books: "",
   choices: ["", "", "", ""],
   createdAt: null,
   entitled: "",
   explanation: "",
-  difficulty: "facile",
+  difficulty: "easy",
   tags: [],
   updatedAt: null
 };
