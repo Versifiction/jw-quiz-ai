@@ -607,8 +607,8 @@ export default function NotFoundPage({ onGoHome }) {
               flexWrap: "wrap",
             }}
           >
-            <a
-              href="/"
+            <Link
+              to="/"
               style={{
                 display: "inline-flex",
                 alignItems: "center",
@@ -638,9 +638,9 @@ export default function NotFoundPage({ onGoHome }) {
               onMouseUp={(e) => (e.currentTarget.style.transform = "")}
             >
               <Ic.Home /> Retour à l'accueil
-            </a>
-            <a
-              href="/quiz"
+            </Link>
+            <Link
+              to="/quiz"
               style={{
                 display: "inline-flex",
                 alignItems: "center",
@@ -668,7 +668,7 @@ export default function NotFoundPage({ onGoHome }) {
               }}
             >
               Explorer les quiz <Ic.ChevR />
-            </a>
+            </Link>
           </div>
 
           {/* Quick links — left col only (desktop) */}
